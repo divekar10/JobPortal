@@ -32,10 +32,11 @@ namespace JobPortal.Api.Controllers
 
         [HttpPost]
         [Route("Register")]
+        [AllowAnonymous]
         public async Task<IActionResult> Register(User user)
         {
-            await _userService.Add(user);
-            return Ok(new Response { Status = "Success", Message = "Account successfully created..." });
+            var result = await _userService.Add(user);
+            return Ok(new Response { Code = StatusCodes.Status200OK, Message = "Account successfully created...", Data = result});
         }
 
         [HttpPost]
@@ -75,6 +76,33 @@ namespace JobPortal.Api.Controllers
             return Unauthorized();
         }
 
+        [HttpGet]
+        [Route("AllUsers")]
+        public async Task<IEnumerable<User>> Get()
+        {
+            return await _userService.GetUsers();
+        }
+
+        [HttpPut]
+        [Route("Update")]
+        public async Task<IActionResult> Update(User user)
+        {
+            var result = await _userService.Update(user);
+            return Ok(new Response { Code = StatusCodes.Status200OK, Message = "Details updated successfully..", Data = result});
+        }
+
+        [HttpDelete]
+        [Route("Delete/{id}")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var result = await _userService.Delete(id);
+
+            if(result == true)
+            {
+                return Ok(new Response { Code = StatusCodes.Status200OK, Message = "User deleted successfully.." });
+            }
+            return NotFound(new Response { Code = StatusCodes.Status404NotFound, Message = "User not found.."});
+        }
      
     }
 }

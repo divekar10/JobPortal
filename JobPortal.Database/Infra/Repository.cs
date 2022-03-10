@@ -39,15 +39,17 @@ namespace JobPortal.Database.Infra
             return await _jobDbContext.Set<T>().ToListAsync();
         }
 
-        public void Delete(T entity)
+        public virtual void Delete(T entity)
         {
             _jobDbContext.Set<T>().Remove(entity);
+            _jobDbContext.SaveChangesAsync();
         }
 
-        public void Update(T entity)
+        public virtual void Update(T entity)
         {
             _jobDbContext.Entry(entity).State = EntityState.Modified;
             _jobDbContext.Set<T>().Update(entity);
+            _jobDbContext.SaveChangesAsync();
         }
 
         public async Task<IEnumerable<T>> Get(Expression<Func<T, bool>> expression)

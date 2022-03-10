@@ -13,5 +13,7 @@ namespace JobPortal.Service
         Task<User> Add(User entity);
         Task<IEnumerable<User>> AddUsers(List<User> entities);
         Task<IEnumerable<User>> GetUsers();
+        Task<User> Update(User entity);
+        Task<bool> Delete(int id); 
     }
 }

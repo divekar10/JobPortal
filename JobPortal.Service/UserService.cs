@@ -32,6 +32,18 @@ namespace JobPortal.Service
             return user;
         }
 
+        public async Task<bool> Delete(int id)
+        {
+            User userId = await _userRepository.GetById(id);
+
+            if(userId != null)
+            {
+                _userRepository.Delete(userId);
+                return true;
+            }
+            return false;
+        }
+
         public async Task<User> GetUser(string email, string password)
         {
             try
@@ -48,6 +60,23 @@ namespace JobPortal.Service
         public async Task<IEnumerable<User>> GetUsers()
         {
             return await _userRepository.Get();
+        }
+
+        public async Task<User> Update(User entity)
+        {
+            User _user = await _userRepository.GetById(entity.Id);
+
+            if(entity != null)
+            {
+                _user.Name = entity.Name;
+                _user.Email = entity.Email;
+                _user.Password = entity.Password;
+                _user.IsActive = entity.IsActive;
+                _userRepository.Update(_user);
+
+                return _user;
+            }
+            return entity;
         }
     }
 }
