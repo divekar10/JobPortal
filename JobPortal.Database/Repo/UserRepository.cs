@@ -14,5 +14,21 @@ namespace JobPortal.Database.Repo
         {
 
         }
+
+        public IEnumerable<User> GetCandidates()
+        {
+            var candidates = (from u in JobDbContext.User
+                              where u.RoleId == 1
+                              select u).ToList();
+            return candidates;
+        }
+
+        public IEnumerable<User> GetRecruiters()
+        {
+            var recruiters = (from u in JobDbContext.User
+                              where u.RoleId == 2
+                              select u).ToList();
+            return recruiters;
+        }
     }
 }

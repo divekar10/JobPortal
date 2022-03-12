@@ -13,7 +13,12 @@ namespace JobPortal.Service
         Task<User> Add(User entity);
         Task<IEnumerable<User>> AddUsers(List<User> entities);
         Task<IEnumerable<User>> GetUsers();
+        IEnumerable<User> GetRecruiters();
+        IEnumerable<User> GetCandidates();
         Task<User> Update(User entity);
-        Task<bool> Delete(int id); 
+        Task<bool> Delete(int id);
+        Task<User> GetUserByMail(string email);
+        Task<bool> ForgotPassword(string email);
+        Task<User> ResetPassword(int otp, string newPassword, string confirmPassword);
     }
 }

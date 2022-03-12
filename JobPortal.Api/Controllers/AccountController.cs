@@ -1,7 +1,5 @@
 ﻿using JobPortal.Model;
 using JobPortal.Service;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -18,13 +16,11 @@ namespace JobPortal.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [EnableCors]
-    [Authorize]
-    public class UserController : ControllerBase
+    public class AccountController : ControllerBase
     {
         private readonly IUserService _userService;
         private readonly IConfiguration _configuration;
-        public UserController(IUserService userService, IConfiguration configuration)
+        public AccountController(IUserService userService, IConfiguration configuration)
         {
             _userService = userService;
             _configuration = configuration;
@@ -32,21 +28,19 @@ namespace JobPortal.Api.Controllers
 
         [HttpPost]
         [Route("Register")]
-        [AllowAnonymous]
         public async Task<IActionResult> Register(User user)
         {
             var result = await _userService.Add(user);
-            return Ok(new Response { Code = StatusCodes.Status200OK, Message = "Account successfully created...", Data = result});
+            return Ok(new Response { Code = StatusCodes.Status200OK, Message = "Account successfully created...", Data = result });
         }
 
         [HttpPost]
         [Route("Login")]
-        [AllowAnonymous]
         public async Task<IActionResult> Login(Login model)
         {
             var user = await _userService.GetUser(model.Email, model.Password);
 
-            if(user != null)
+            if (user != null)
             {
                 var claims = new List<Claim>
                 {
@@ -75,34 +69,5 @@ namespace JobPortal.Api.Controllers
             }
             return Unauthorized();
         }
-
-        [HttpGet]
-        [Route("AllUsers")]
-        public async Task<IEnumerable<User>> Get()
-        {
-            return await _userService.GetUsers();
-        }
-
-        [HttpPut]
-        [Route("Update")]
-        public async Task<IActionResult> Update(User user)
-        {
-            var result = await _userService.Update(user);
-            return Ok(new Response { Code = StatusCodes.Status200OK, Message = "Details updated successfully..", Data = result});
-        }
-
-        [HttpDelete]
-        [Route("Delete/{id}")]
-        public async Task<IActionResult> Delete(int id)
-        {
-            var result = await _userService.Delete(id);
-
-            if(result == true)
-            {
-                return Ok(new Response { Code = StatusCodes.Status200OK, Message = "User deleted successfully.." });
-            }
-            return NotFound(new Response { Code = StatusCodes.Status404NotFound, Message = "User not found.."});
-        }
-     
     }
 }

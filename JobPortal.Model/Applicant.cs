@@ -13,7 +13,6 @@ namespace JobPortal.Model
 
         [RequiredNumber(ErrorMessage = "Please specify job.")]
         public int JobId { get; set; }
-        [RequiredNumber(ErrorMessage = "Please specify user.")]
         public int AppliedBy { get; set; }
         public DateTime AppliedAt { get; set; }
         public bool IsActive { get; set; }

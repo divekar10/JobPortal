@@ -15,29 +15,60 @@ namespace JobPortal.Service
         {
             _jobRepository = jobRepository;   
         }
-        public Task<Job> Add(Job entity)
+        public async Task<Job> Add(Job entity, int userId)
         {
-            throw new NotImplementedException();
+            var _job = new Job();
+            _job.Title = entity.Title;
+            _job.Description = entity.Description;
+            _job.CreatedBy = userId;
+            _job.CreatedAt = DateTime.Now;
+            _job.EndAt = DateTime.Now.AddMonths(1);
+            _job.IsActive = true;
+            return await _jobRepository.AddAsync(_job);
         }
 
-        public Task<IEnumerable<Job>> AddJobs(List<Job> entities)
+        public async Task<IEnumerable<Job>> AddJobs(List<Job> entities)
         {
-            throw new NotImplementedException();
+            IEnumerable<Job> job = await _jobRepository.AddAsync(entities);
+            return job;
         }
 
-        public Task<bool> Delete(int id)
+        public async Task<bool> Delete(int id)
         {
-            throw new NotImplementedException();
+            var jobId = await _jobRepository.GetById(id);
+            if(jobId != null)
+            {
+                _jobRepository.Delete(jobId);
+                return true;
+            }
+            return false;
         }
 
-        public Task<IEnumerable<Job>> GetJobs()
+        public async Task<IEnumerable<Job>> GetJobs()
         {
-            throw new NotImplementedException();
+            return await _jobRepository.Get();
         }
 
-        public Task<Job> Update(Job entity)
+        public IEnumerable<Job> GetMyJobs(int userId)
         {
-            throw new NotImplementedException();
+            return _jobRepository.GetMyJobs(userId);
+        }
+
+        public async Task<Job> Update(Job entity)
+        {
+            var _job = await _jobRepository.GetById(entity.Id);
+            if(_job != null)
+            {
+                _job.Title = entity.Title;
+                _job.Description = entity.Description;
+                _job.CreatedBy = entity.CreatedBy;
+                _job.CreatedAt = _job.CreatedAt;
+                _job.EndAt = entity.EndAt;
+                _job.IsActive = entity.IsActive;
+                _jobRepository.Update(_job);
+                return _job;
+            }
+            return entity;
         }
     }
 }

@@ -14,5 +14,13 @@ namespace JobPortal.Database.Repo
         {
 
         }
+
+        public IEnumerable<Job> GetMyJobs(int userId)
+        {
+            var myJobs = (from j in JobDbContext.Job
+                          where j.CreatedBy == userId
+                          select j).ToList();
+            return myJobs;
+        }
     }
 }

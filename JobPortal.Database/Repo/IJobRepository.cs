@@ -10,5 +10,6 @@ namespace JobPortal.Database.Repo
 {
     public interface IJobRepository : IRepository<Job>
     {
+        IEnumerable<Job> GetMyJobs(int userId);
     }
 }

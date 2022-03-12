@@ -10,9 +10,10 @@ namespace JobPortal.Service
     public interface IJobService
     {
         //Task<Job> GetJob();
-        Task<Job> Add(Job entity);
+        Task<Job> Add(Job entity, int userId);
         Task<IEnumerable<Job>> AddJobs(List<Job> entities);
         Task<IEnumerable<Job>> GetJobs();
+        IEnumerable<Job> GetMyJobs(int userId);
         Task<Job> Update(Job entity);
         Task<bool> Delete(int id);
     }

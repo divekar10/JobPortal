@@ -1,6 +1,7 @@
 using JobPortal.Database;
 using JobPortal.Database.Repo;
 using JobPortal.Service;
+using JobPortal.Service.Notifications;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -38,12 +39,21 @@ namespace JobPortal.Api
 
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IJobRepository, JobRepository>();
+            services.AddScoped<IJobService, JobService>();
+            services.AddScoped<IApplicantRepository, ApplicantRepository>();
+            services.AddScoped<IApplicantService, ApplicantService>();
+            services.AddScoped<IEmailSender, Notification>();
+            services.AddScoped<IOtpRepository, OtpRepository>();
+            services.AddScoped<IOtpService, OtpService>();
 
             services.AddCors(c =>
             {
-                c.AddDefaultPolicy(builder =>
+                c.AddPolicy("AllowOrigin", builder =>
                 {
-                    builder.WithOrigins("https://localhost:44348");
+                    builder.AllowAnyOrigin();
+                    builder.AllowAnyHeader();
+                    builder.AllowAnyMethod();
                 });
             });
 
@@ -117,7 +127,7 @@ namespace JobPortal.Api
 
             app.UseRouting();
 
-            app.UseCors();
+            app.UseCors(options => options.AllowAnyOrigin());
 
             app.UseAuthentication();
 

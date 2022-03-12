@@ -8,9 +8,8 @@ using System.Threading.Tasks;
 
 namespace JobPortal.Database.Repo
 {
-    public interface IUserRepository : IRepository<User>
+    public interface IApplicantRepository : IRepository<Applicant>
     {
-        IEnumerable<User> GetRecruiters();
-        IEnumerable<User> GetCandidates();
+        Task<IEnumerable<ApplicantDetailsDto>> GetAllApplicantJobApplied();
     }
 }
