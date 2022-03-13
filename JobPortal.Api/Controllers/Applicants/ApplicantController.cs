@@ -28,7 +28,9 @@ namespace JobPortal.Api.Controllers.Applicants
         public async Task<IActionResult> Apply(Applicant applicant)
         {
             var apply = await _applicantService.Apply(applicant, UserId);
-            return Ok(new Response { Code = StatusCodes.Status200OK, Message = "Applied successfully ...", Data = apply });
+            if(apply != null)
+                return Ok(new Response { Code = StatusCodes.Status200OK, Message = "Applied successfully ...", Data = apply });
+            return BadRequest(new Response { Code = StatusCodes.Status400BadRequest, Message = "Wrong details"});
         }
 
         [HttpGet]

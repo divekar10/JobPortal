@@ -25,26 +25,38 @@ namespace JobPortal.Service
 
         public async Task<Applicant> Apply(Applicant entity, int userId)
         {
+            try
+            {
             var applyJob = new Applicant();
             applyJob.JobId = entity.JobId;
             applyJob.AppliedBy = userId;
             applyJob.AppliedAt = DateTime.Now;
             applyJob.IsActive = true;
 
-            await _applicantRepository.AddAsync(applyJob);
-
             var UserDetails = await _userRepository.GetById(userId);
             var jobDetails = await _jobRepository.GetById(applyJob.JobId);
-            var to = UserDetails.Email;
-            var subject = "Job Applied";
-            var body = "You have successfully applied for the job "+ jobDetails.Title;
-            await _emailSender.SendEmailAsync(to, subject, body);
 
-            var recruiter = await _userRepository.GetById(jobDetails.CreatedBy);
-            var subjectRecruiter = "Applicant registered";
-            var bodyRecruiter = $"One Applicant have applied for the job you posted.\nApplicant Email : {UserDetails.Email}\nApplicant Name : {UserDetails.Name}\nJob Title : {jobDetails.Title}";
-            await _emailSender.SendEmailAsync(recruiter.Email,subjectRecruiter,bodyRecruiter);
-            return applyJob;
+            if(jobDetails != null) 
+                { 
+                    await _applicantRepository.AddAsync(applyJob);
+                    var to = UserDetails.Email;
+                    var subject = "Job Applied";
+                    var body = "You have successfully applied for the job " + jobDetails.Title;
+                    await _emailSender.SendEmailAsync(to, subject, body);
+
+                    var recruiter = await _userRepository.GetById(jobDetails.CreatedBy);
+                    var subjectRecruiter = "Applicant registered";
+                    var bodyRecruiter = $"One Applicant have applied for the job you posted. <br /> Applicant Email : {UserDetails.Email} <br /> Applicant Name : {UserDetails.Name} <br /> Job Title : {jobDetails.Title}";
+                    await _emailSender.SendEmailAsync(recruiter.Email, subjectRecruiter, bodyRecruiter);
+                    return applyJob;
+                }
+                return null;
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
         }
 
         public async Task<IEnumerable<Applicant>> Apply(List<Applicant> entities)

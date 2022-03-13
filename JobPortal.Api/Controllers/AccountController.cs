@@ -30,8 +30,16 @@ namespace JobPortal.Api.Controllers
         [Route("Register")]
         public async Task<IActionResult> Register(User user)
         {
-            var result = await _userService.Add(user);
-            return Ok(new Response { Code = StatusCodes.Status200OK, Message = "Account successfully created...", Data = result });
+            var isEmailExist = await _userService.IsEmailAlreadyExist(user.Email);
+            if(isEmailExist == true) { 
+                var result = await _userService.Add(user);
+                return Ok(new Response { Code = StatusCodes.Status200OK, Message = "Account successfully created...", Data = result });
+            }
+            else
+            {
+                return BadRequest(new Response { Code = StatusCodes.Status400BadRequest, Message = "Email Already exist.."});
+
+            }
         }
 
         [HttpPost]

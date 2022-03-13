@@ -107,5 +107,18 @@ namespace JobPortal.Api.Controllers
             }
             return BadRequest(new Response { Code = StatusCodes.Status400BadRequest, Message = "Incorect details.." });
         }
+
+        [HttpGet]
+        [Route("GetMyAllJobsApplied")]
+        public async Task<IActionResult> GetMyAllJobsApplied()
+        {
+            var jobs = await _userService.GetMyAllJobsApplied(UserId);
+
+            if (!jobs.Any())
+            {
+                return NotFound(new Response { Code = StatusCodes.Status404NotFound, Message = "Data not found.." });
+            }
+            return Ok(new Response { Code = StatusCodes.Status200OK, Message = "Success", Data = jobs });
+        }
     }
 }

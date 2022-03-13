@@ -24,14 +24,22 @@ namespace JobPortal.Service
         }
         public async Task<User> Add(User entity)
         {
+            try
+            {
             var user = new User();
             user.Name = entity.Name;
-            user.Email = entity.Email;
+            user.Email = entity.Email.ToLower();
             user.Password = entity.Password;
             user.RoleId = entity.RoleId;
             user.CreatedAt = DateTime.Now;
             user.IsActive = true;
             return await _userRepository.AddAsync(user);
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
         }
 
         public async Task<IEnumerable<User>> AddUsers(List<User> entities)
@@ -54,15 +62,30 @@ namespace JobPortal.Service
 
         public async Task<bool> ForgotPassword(string email)
         {
+            
+            try
+            {
             var user = await GetUserByMail(email);
             if(user != null)
             {
-                var otp = GenerateRandomNo();
+                regenerate:
+                var otp = Convert.ToInt32(GenerateRandomNo());
+
+                var isUnique = await _otpService.IsOtpUnique(otp);
+                    if (isUnique == false)
+                    {
+                        goto regenerate;
+                    }
+
                 var to = user.Email;
                 var sub = "OTP";
-                var body = "OTP is : " + otp;
-
-                var userOtp = new UserOtp();
+                    var body = "";
+                    body += "<h3>Job Portal</h3>";
+                    body += $"<h4 style='font-size:1.1em'>Hi, {user.Name}</h4>";
+                    body += "<h5>For Reseting your password, OTP is valid for 10 minutes</h5>";
+                    body += $"<h2 style='background: #00466a;margin: 0 auto;width: max-content;padding: 0 10px;color: #fff;border-radius: 4px;'>{otp}</h2>";
+                   
+                    var userOtp = new UserOtp();
                 userOtp.Otp = Convert.ToInt32(otp);
                 userOtp.UserId = user.Id;
                 userOtp.CreatedAt = DateTime.Now;
@@ -73,6 +96,12 @@ namespace JobPortal.Service
                 return true;
             }
             return false;
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
         }
 
         public IEnumerable<User> GetCandidates()
@@ -109,9 +138,9 @@ namespace JobPortal.Service
                 }
                 return user;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                throw;
+                throw ex;
             }
         }
 
@@ -122,6 +151,8 @@ namespace JobPortal.Service
 
         public async Task<User> Update(User entity)
         {
+            try
+            {
             User _user = await _userRepository.GetById(entity.Id);
 
             if(entity != null)
@@ -135,6 +166,12 @@ namespace JobPortal.Service
                 return _user;
             }
             return entity;
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
         }
 
         private static Random _random = new Random();
@@ -145,6 +182,8 @@ namespace JobPortal.Service
 
         public async Task<User> ResetPassword(int otp, string newPassword, string confirmPassword)
         {
+            try
+            {
             var details = await ValidateOtp(otp);
             var updateUser = new User();
             if (details != null)
@@ -160,6 +199,12 @@ namespace JobPortal.Service
                 
             }
             return null;
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
         }
 
         private async Task<UserOtp> ValidateOtp(int otp)
@@ -167,9 +212,22 @@ namespace JobPortal.Service
             return await _otpService.Validate(otp);
         }
 
-        public static int GetCurrentUserId()
+        public async Task<IEnumerable<AppliedJobDto>> GetMyAllJobsApplied(int userId)
         {
-            
+            return await _userRepository.GetMyAllJobsApplied(userId);
         }
+
+        public async Task<bool> IsEmailAlreadyExist(string email)
+        {
+            var isUnique = await _userRepository.GetDefault(x => x.Email == email);
+            if (isUnique == null)
+                return true;
+            return false;
+        }
+
+        //public static int GetCurrentUserId()
+        //{
+
+        //}
     }
 }

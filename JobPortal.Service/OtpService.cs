@@ -12,6 +12,7 @@ namespace JobPortal.Service
     {
         Task<UserOtp> Add(UserOtp entity);
         Task<UserOtp> Validate(int otp);
+        Task<bool> IsOtpUnique(int otp);
     }
     public class OtpService : IOtpService
     {
@@ -27,7 +28,15 @@ namespace JobPortal.Service
 
         public async Task<UserOtp> Validate(int otp)
         {
-           return await _otpRepository.GetDefault(x => x.Otp == otp && x.ExpireAt <= DateTime.Now.AddMinutes(10));
+           return await _otpRepository.GetDefault(x => x.Otp == otp && x.ExpireAt >= DateTime.Now);
+        }
+
+        public async Task<bool> IsOtpUnique(int otp)
+        {
+            var IsUnique = await _otpRepository.GetDefault(x => x.Otp == otp);
+            if (IsUnique == null)
+                return true;
+            return false;
         }
     }
 }

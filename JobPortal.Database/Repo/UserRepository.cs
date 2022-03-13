@@ -1,5 +1,6 @@
 ﻿using JobPortal.Database.Infra;
 using JobPortal.Model;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,6 +22,20 @@ namespace JobPortal.Database.Repo
                               where u.RoleId == 1
                               select u).ToList();
             return candidates;
+        }
+
+        public async Task<IEnumerable<AppliedJobDto>> GetMyAllJobsApplied(int userId)
+        {
+            var myJobs = await (from a in JobDbContext.Applicant
+                          join j in JobDbContext.Job on a.JobId equals j.Id
+                          where a.AppliedBy == userId
+                          select new AppliedJobDto
+                          {
+                              UserId = a.AppliedBy,
+                              JobId = a.JobId,
+                              JobTitle = j.Title
+                          }).ToListAsync();
+            return myJobs;
         }
 
         public IEnumerable<User> GetRecruiters()

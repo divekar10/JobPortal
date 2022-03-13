@@ -20,5 +20,7 @@ namespace JobPortal.Service
         Task<User> GetUserByMail(string email);
         Task<bool> ForgotPassword(string email);
         Task<User> ResetPassword(int otp, string newPassword, string confirmPassword);
+        Task<IEnumerable<AppliedJobDto>> GetMyAllJobsApplied(int userId);
+        Task<bool> IsEmailAlreadyExist(string email);
     }
 }

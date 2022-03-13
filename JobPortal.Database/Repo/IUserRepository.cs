@@ -12,5 +12,6 @@ namespace JobPortal.Database.Repo
     {
         IEnumerable<User> GetRecruiters();
         IEnumerable<User> GetCandidates();
+        Task<IEnumerable<AppliedJobDto>> GetMyAllJobsApplied(int userId);
     }
 }
