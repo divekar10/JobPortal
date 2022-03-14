@@ -24,7 +24,6 @@ namespace JobPortal.Api.Controllers.Jobs
         }
 
         [HttpPost]
-        [Route("AddJob")]
         public async Task<IActionResult> Add(Job job)
         {
             var result = await _jobService.Add(job, UserId);
@@ -32,7 +31,7 @@ namespace JobPortal.Api.Controllers.Jobs
         }
 
         [HttpPut]
-        [Route("UpdateJob")]
+        [Route("{id}")]
         public async Task<IActionResult> Update(Job job)
         {
             var result = await _jobService.Update(job);
@@ -40,7 +39,7 @@ namespace JobPortal.Api.Controllers.Jobs
         }
 
         [HttpDelete]
-        [Route("DeleteJob/{id}")]
+        [Route("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
             var result = await _jobService.Delete(id);
@@ -53,14 +52,14 @@ namespace JobPortal.Api.Controllers.Jobs
         }
 
         [HttpGet]
-        [Route("AllJobs")]
+        [Route("Jobs")]
         public async Task<IEnumerable<Job>> Get()
         {
             return await _jobService.GetJobs();
         }
 
         [HttpGet]
-        [Route("MyJobs")]
+        [Route("JobsPostedByMe/{id}")]
         public IActionResult GetMyJobs()
         {
            var jobs = _jobService.GetMyJobs(UserId);

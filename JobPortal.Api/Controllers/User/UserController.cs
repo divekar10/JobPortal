@@ -31,14 +31,14 @@ namespace JobPortal.Api.Controllers
         }
 
         [HttpGet]
-        [Route("AllUsers")]
+        [Route("Users")]
         public async Task<IEnumerable<User>> Get()
         {
             return await _userService.GetUsers();
         }
 
         [HttpGet]
-        [Route("GetCandidates")]
+        [Route("Candidates")]
         public IActionResult GetCandidates()
         {
             var candidates = _userService.GetCandidates();
@@ -50,7 +50,7 @@ namespace JobPortal.Api.Controllers
         }
 
         [HttpGet]
-        [Route("GetRecuiters")]
+        [Route("Recuiters")]
         public IActionResult GetRecuiters()
         {
             var recruiters = _userService.GetRecruiters();
@@ -62,7 +62,7 @@ namespace JobPortal.Api.Controllers
         }
 
         [HttpPut]
-        [Route("Update")]
+        [Route("{id}")]
         public async Task<IActionResult> Update(User user)
         {
             var result = await _userService.Update(user);
@@ -72,7 +72,7 @@ namespace JobPortal.Api.Controllers
         }
 
         [HttpDelete]
-        [Route("Delete/{id}")]
+        [Route("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
             var result = await _userService.Delete(id);
@@ -110,7 +110,7 @@ namespace JobPortal.Api.Controllers
         }
 
         [HttpGet]
-        [Route("GetMyAllJobsApplied")]
+        [Route("AppliedJobsByMe")]
         public async Task<IActionResult> GetMyAllJobsApplied()
         {
             var jobs = await _userService.GetMyAllJobsApplied(UserId);

@@ -34,14 +34,14 @@ namespace JobPortal.Api.Controllers.Applicants
         }
 
         [HttpGet]
-        [Route("GetAllApplicantJobApplied")]
+        [Route("AllApplicantJobApplied")]
         public async Task<IEnumerable<ApplicantDetailsDto>> GetAllApplicantJobApplied()
         {
             return await _applicantService.GetAllApplicantJobApplied();
         }
 
         [HttpGet]
-        [Route("GetAllApplicantAppliedToMyJobPosted")]
+        [Route("ApplicantsAppliedToRecruiterJob/{id}")]
         public async Task<IEnumerable<JobPostedApplicantDto>> GetAllApplicantAppliedToMyJobPosted()
         {
             return await _applicantService.GetAllApplicantAppliedToMyJobPosted(UserId);
