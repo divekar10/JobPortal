@@ -17,7 +17,6 @@ namespace JobPortal.Api.Controllers
         }
 
         protected int UserId => int.Parse(this.User.Claims.First(x => x.Type == "UserId").Value);
-
         protected int RoleId => int.Parse(this.User.Claims.First(x => x.Type == "RoleId").Value);
     }
 }

@@ -18,8 +18,8 @@ namespace JobPortal.Api.Controllers
 {
     [Authorize]
     [Route("api/[controller]")]
-    [ApiController]
     [EnableCors("AllowOrigin")]
+    [ApiController]
     public class UserController : BaseController
     {
         private readonly IUserService _userService;
@@ -66,7 +66,9 @@ namespace JobPortal.Api.Controllers
         public async Task<IActionResult> Update(User user)
         {
             var result = await _userService.Update(user);
-            return Ok(new Response { Code = StatusCodes.Status200OK, Message = "Details updated successfully..", Data = result});
+            if(result != null)
+                return Ok(new Response { Code = StatusCodes.Status200OK, Message = "Details updated successfully..", Data = result});
+            return BadRequest(new Response { Code = StatusCodes.Status400BadRequest, Message = "Something went wrong", Data = result });
         }
 
         [HttpDelete]
@@ -74,20 +76,19 @@ namespace JobPortal.Api.Controllers
         public async Task<IActionResult> Delete(int id)
         {
             var result = await _userService.Delete(id);
-
             if(result == true)
             {
                 return Ok(new Response { Code = StatusCodes.Status200OK, Message = "User deleted successfully.." });
             }
             return NotFound(new Response { Code = StatusCodes.Status404NotFound, Message = "User not found.."});
         }
+
         [HttpPost]
         [Route("ForgotPassword")]
         [AllowAnonymous]
         public async Task<IActionResult> ForgotPassword(string email)
         {
             var user = await _userService.ForgotPassword(email);
-
             if(user == true)
             {
                 return Ok(new Response { Code = StatusCodes.Status200OK, Message = "Otp sent to the register email address.." });
@@ -113,7 +114,6 @@ namespace JobPortal.Api.Controllers
         public async Task<IActionResult> GetMyAllJobsApplied()
         {
             var jobs = await _userService.GetMyAllJobsApplied(UserId);
-
             if (!jobs.Any())
             {
                 return NotFound(new Response { Code = StatusCodes.Status404NotFound, Message = "Data not found.." });

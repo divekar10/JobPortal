@@ -46,7 +46,6 @@ namespace JobPortal.Service.Notifications
             }
             catch (Exception ex)
             {
-
                 throw ex;
             }
         }

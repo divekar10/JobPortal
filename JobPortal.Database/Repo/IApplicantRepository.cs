@@ -11,5 +11,6 @@ namespace JobPortal.Database.Repo
     public interface IApplicantRepository : IRepository<Applicant>
     {
         Task<IEnumerable<ApplicantDetailsDto>> GetAllApplicantJobApplied();
+        Task<IEnumerable<JobPostedApplicantDto>> GetAllApplicantAppliedToMyJobPosted(int userId);
     }
 }

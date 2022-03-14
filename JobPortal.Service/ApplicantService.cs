@@ -54,7 +54,6 @@ namespace JobPortal.Service
             }
             catch (Exception ex)
             {
-
                 throw ex;
             }
         }
@@ -63,6 +62,11 @@ namespace JobPortal.Service
         {
             IEnumerable<Applicant> applicants = await _applicantRepository.AddAsync(entities);
             return applicants;
+        }
+
+        public async Task<IEnumerable<JobPostedApplicantDto>> GetAllApplicantAppliedToMyJobPosted(int userId)
+        {
+            return await _applicantRepository.GetAllApplicantAppliedToMyJobPosted(userId);   
         }
 
         public async Task<IEnumerable<ApplicantDetailsDto>> GetAllApplicantJobApplied()

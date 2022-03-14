@@ -12,8 +12,8 @@ using System.Threading.Tasks;
 namespace JobPortal.Api.Controllers.Applicants
 {
     [Route("api/[controller]")]
-    [ApiController]
     [EnableCors("AllowOrigin")]
+    [ApiController]
     [Authorize]
     public class ApplicantController : BaseController
     {
@@ -38,6 +38,13 @@ namespace JobPortal.Api.Controllers.Applicants
         public async Task<IEnumerable<ApplicantDetailsDto>> GetAllApplicantJobApplied()
         {
             return await _applicantService.GetAllApplicantJobApplied();
+        }
+
+        [HttpGet]
+        [Route("GetAllApplicantAppliedToMyJobPosted")]
+        public async Task<IEnumerable<JobPostedApplicantDto>> GetAllApplicantAppliedToMyJobPosted()
+        {
+            return await _applicantService.GetAllApplicantAppliedToMyJobPosted(UserId);
         }
     }
 }

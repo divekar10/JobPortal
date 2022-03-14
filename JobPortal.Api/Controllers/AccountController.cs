@@ -1,5 +1,6 @@
 ﻿using JobPortal.Model;
 using JobPortal.Service;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -15,6 +16,7 @@ using System.Threading.Tasks;
 namespace JobPortal.Api.Controllers
 {
     [Route("api/[controller]")]
+    [EnableCors("AllowOrigin")]
     [ApiController]
     public class AccountController : ControllerBase
     {
@@ -30,15 +32,14 @@ namespace JobPortal.Api.Controllers
         [Route("Register")]
         public async Task<IActionResult> Register(User user)
         {
-            var isEmailExist = await _userService.IsEmailAlreadyExist(user.Email);
-            if(isEmailExist == true) { 
-                var result = await _userService.Add(user);
-                return Ok(new Response { Code = StatusCodes.Status200OK, Message = "Account successfully created...", Data = result });
+            var isExist = await _userService.IsEmailAlreadyExist(user.Email);
+            if(isExist == true) {
+                return BadRequest(new Response { Code = StatusCodes.Status400BadRequest, Message = "Email Already exist.." });
             }
             else
             {
-                return BadRequest(new Response { Code = StatusCodes.Status400BadRequest, Message = "Email Already exist.."});
-
+                var result = await _userService.Add(user);
+                return Ok(new Response { Code = StatusCodes.Status200OK, Message = "Account successfully created...", Data = result });
             }
         }
 
@@ -47,7 +48,6 @@ namespace JobPortal.Api.Controllers
         public async Task<IActionResult> Login(Login model)
         {
             var user = await _userService.GetUser(model.Email, model.Password);
-
             if (user != null)
             {
                 var claims = new List<Claim>
@@ -60,7 +60,6 @@ namespace JobPortal.Api.Controllers
                 };
 
                 var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:Secret"]));
-
                 var token = new JwtSecurityToken(
                         issuer: _configuration["JWT:ValidIssuer"],
                         audience: _configuration["JWT:ValidAudience"],

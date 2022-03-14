@@ -12,8 +12,8 @@ using System.Threading.Tasks;
 namespace JobPortal.Api.Controllers.Jobs
 {
     [Route("api/[controller]")]
-    [ApiController]
     [EnableCors("AllowOrigin")]
+    [ApiController]
     [Authorize]
     public class JobController : BaseController
     {
@@ -49,7 +49,7 @@ namespace JobPortal.Api.Controllers.Jobs
             {
                 return Ok(new Response { Code = StatusCodes.Status200OK, Message = "Job deleted successfully.." });
             }
-            return NotFound(new Response { Code = StatusCodes.Status404NotFound, Message = "User not found.." });
+            return NotFound(new Response { Code = StatusCodes.Status404NotFound, Message = "Job not found.." });
         }
 
         [HttpGet]

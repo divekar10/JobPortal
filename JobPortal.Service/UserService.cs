@@ -1,4 +1,5 @@
 ﻿using JobPortal.Database.Repo;
+using BCryptNet = BCrypt.Net.BCrypt;
 using JobPortal.Model;
 using JobPortal.Service.Notifications;
 using Microsoft.AspNetCore.Http;
@@ -29,7 +30,7 @@ namespace JobPortal.Service
             var user = new User();
             user.Name = entity.Name;
             user.Email = entity.Email.ToLower();
-            user.Password = entity.Password;
+            user.Password = BCryptNet.HashPassword(entity.Password);
             user.RoleId = entity.RoleId;
             user.CreatedAt = DateTime.Now;
             user.IsActive = true;
@@ -37,7 +38,6 @@ namespace JobPortal.Service
             }
             catch (Exception ex)
             {
-
                 throw ex;
             }
         }
@@ -51,7 +51,6 @@ namespace JobPortal.Service
         public async Task<bool> Delete(int id)
         {
             User userId = await _userRepository.GetById(id);
-
             if(userId != null)
             {
                 _userRepository.Delete(userId);
@@ -61,8 +60,7 @@ namespace JobPortal.Service
         }
 
         public async Task<bool> ForgotPassword(string email)
-        {
-            
+        {     
             try
             {
             var user = await GetUserByMail(email);
@@ -70,7 +68,6 @@ namespace JobPortal.Service
             {
                 regenerate:
                 var otp = Convert.ToInt32(GenerateRandomNo());
-
                 var isUnique = await _otpService.IsOtpUnique(otp);
                     if (isUnique == false)
                     {
@@ -99,7 +96,6 @@ namespace JobPortal.Service
             }
             catch (Exception ex)
             {
-
                 throw ex;
             }
         }
@@ -118,11 +114,19 @@ namespace JobPortal.Service
         {
             try
             {
-                return await _userRepository.GetDefault(x => x.Email == email && x.Password == password);
+                var user = await _userRepository.GetDefault(x => x.Email == email);
+                if(user != null)
+                {
+                    if(!BCryptNet.Verify(password, user.Password))
+                    {
+                        return null;
+                    }
+                    return user;
+                }
+                return user;
             }
             catch (Exception ex)
             {
-
                 throw ex;
             }
         }
@@ -154,22 +158,20 @@ namespace JobPortal.Service
             try
             {
             User _user = await _userRepository.GetById(entity.Id);
-
-            if(entity != null)
+            if(_user != null)
             {
                 _user.Name = entity.Name;
                 _user.Email = entity.Email;
                 _user.Password = entity.Password;
+                _user.RoleId = entity.RoleId;
                 _user.IsActive = entity.IsActive;
                 _userRepository.Update(_user);
-
                 return _user;
             }
-            return entity;
+            return _user;
             }
             catch (Exception ex)
             {
-
                 throw ex;
             }
         }
@@ -189,20 +191,17 @@ namespace JobPortal.Service
             if (details != null)
             {
                 updateUser = await _userRepository.GetById(details.UserId);
-
                 if (newPassword == confirmPassword)
                 {
-                    updateUser.Password = newPassword;
+                    updateUser.Password = BCryptNet.HashPassword(newPassword);
                     _userRepository.Update(updateUser);
                     return updateUser;
                 }
-                
             }
             return null;
             }
             catch (Exception ex)
             {
-
                 throw ex;
             }
         }
@@ -219,15 +218,10 @@ namespace JobPortal.Service
 
         public async Task<bool> IsEmailAlreadyExist(string email)
         {
-            var isUnique = await _userRepository.GetDefault(x => x.Email == email);
-            if (isUnique == null)
+            var user = await _userRepository.GetDefault(x => x.Email == email);
+            if (user != null)
                 return true;
             return false;
         }
-
-        //public static int GetCurrentUserId()
-        //{
-
-        //}
     }
 }

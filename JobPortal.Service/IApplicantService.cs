@@ -12,5 +12,6 @@ namespace JobPortal.Service
         Task<Applicant> Apply(Applicant entity, int userId);
         Task<IEnumerable<Applicant>> Apply(List<Applicant> entities);
         Task<IEnumerable<ApplicantDetailsDto>> GetAllApplicantJobApplied();
+        Task<IEnumerable<JobPostedApplicantDto>> GetAllApplicantAppliedToMyJobPosted(int userId);
     }
 }
