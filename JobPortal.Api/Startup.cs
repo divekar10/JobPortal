@@ -45,6 +45,9 @@ namespace JobPortal.Api
             services.AddScoped<IEmailSender, Notification>();
             services.AddScoped<IOtpRepository, OtpRepository>();
             services.AddScoped<IOtpService, OtpService>();
+            services.AddScoped<IRoleRepository, RoleRepository>();
+            services.AddScoped<IRoleService, RoleService>();
+            services.AddScoped<IRecruiterService, RecruiterService>();
 
             services.AddCors(c =>
             {
@@ -78,6 +81,13 @@ namespace JobPortal.Api
                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["JWT:Secret"]))
                };
            });
+
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("Restricted", policy => policy.RequireRole("Admin", "Recruiter"));
+                options.AddPolicy("Allowed", policy => policy.RequireRole("Admin", "Recruiter", "User"));
+                options.AddPolicy("Admin", policy => policy.RequireRole("Admin"));
+            });
 
             services.AddSwaggerGen(c =>
             {

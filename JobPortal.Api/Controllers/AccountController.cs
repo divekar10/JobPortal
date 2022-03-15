@@ -22,10 +22,12 @@ namespace JobPortal.Api.Controllers
     {
         private readonly IUserService _userService;
         private readonly IConfiguration _configuration;
-        public AccountController(IUserService userService, IConfiguration configuration)
+        private readonly IRoleService _roleService;
+        public AccountController(IUserService userService, IConfiguration configuration, IRoleService roleService)
         {
             _userService = userService;
             _configuration = configuration;
+            _roleService = roleService;
         }
 
         [HttpPost]
@@ -45,17 +47,20 @@ namespace JobPortal.Api.Controllers
 
         [HttpPost]
         [Route("Login")]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Login(Login model)
         {
             var user = await _userService.GetUser(model.Email, model.Password);
             if (user != null)
             {
+                var role = await _roleService.GetRoleById(user.RoleId);
                 var claims = new List<Claim>
                 {
                     new Claim(ClaimTypes.Name,user.Name),
                     new Claim("UserId", Convert.ToString(user.Id), ClaimValueTypes.Integer),
                     new Claim("Email", user.Email, ClaimValueTypes.String),
                     new Claim("RoleId", Convert.ToString(user.RoleId), ClaimValueTypes.Integer),
+                    new Claim(ClaimTypes.Role, role.Roles, ClaimValueTypes.String),
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
                 };
 

@@ -12,8 +12,7 @@ namespace JobPortal.Service
         Task<User> GetUser(string email, string password);
         Task<User> Add(User entity);
         Task<IEnumerable<User>> AddUsers(List<User> entities);
-        Task<IEnumerable<User>> GetUsers();
-        IEnumerable<User> GetRecruiters();
+        IEnumerable<User> GetUsers(PagedParameters pagedParameters);
         IEnumerable<User> GetCandidates();
         Task<User> Update(User entity);
         Task<bool> Delete(int id);

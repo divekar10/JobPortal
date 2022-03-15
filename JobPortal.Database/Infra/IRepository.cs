@@ -17,5 +17,7 @@ namespace JobPortal.Database.Infra
         Task<T> GetDefault(Expression<Func<T, bool>> expression);
         Task<IEnumerable<T>> Get();
         Task<T> GetById(int id);
+        IQueryable<T> FindAll();
+
     }
 }

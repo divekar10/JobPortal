@@ -26,7 +26,6 @@ namespace JobPortal.Model
         [DataType(DataType.Password)]
         public string Password { get; set; }
 
-        [RequiredNumber(ErrorMessage = "Please specify role.")]
         public int RoleId { get; set; }
         public DateTime CreatedAt { get; set; }
         public bool IsActive { get; set; }

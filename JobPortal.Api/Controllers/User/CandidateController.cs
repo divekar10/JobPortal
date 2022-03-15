@@ -20,11 +20,11 @@ namespace JobPortal.Api.Controllers
     [Route("api/[controller]")]
     [EnableCors("AllowOrigin")]
     [ApiController]
-    public class UserController : BaseController
+    public class CandidateController : BaseController
     {
         private readonly IUserService _userService;
         private readonly IConfiguration _configuration;
-        public UserController(IUserService userService, IConfiguration configuration)
+        public CandidateController(IUserService userService, IConfiguration configuration)
         {
             _userService = userService;
             _configuration = configuration;
@@ -32,33 +32,9 @@ namespace JobPortal.Api.Controllers
 
         [HttpGet]
         [Route("Users")]
-        public async Task<IEnumerable<User>> Get()
+        public IActionResult Get([FromQuery] PagedParameters pagedParameters)
         {
-            return await _userService.GetUsers();
-        }
-
-        [HttpGet]
-        [Route("Candidates")]
-        public IActionResult GetCandidates()
-        {
-            var candidates = _userService.GetCandidates();
-            if (!candidates.Any())
-            {
-                return NotFound(new Response { Code = StatusCodes.Status404NotFound, Message = "Data not found.." });
-            }
-            return Ok(new Response { Code = StatusCodes.Status200OK, Message = "Success", Data = candidates });
-        }
-
-        [HttpGet]
-        [Route("Recuiters")]
-        public IActionResult GetRecuiters()
-        {
-            var recruiters = _userService.GetRecruiters();
-            if (!recruiters.Any())
-            {
-                return NotFound(new Response { Code = StatusCodes.Status404NotFound, Message = "Data not found.." });
-            }
-            return Ok(new Response { Code = StatusCodes.Status200OK, Message = "Success", Data = recruiters });
+            return Ok(_userService.GetUsers(pagedParameters));
         }
 
         [HttpPut]
@@ -107,6 +83,18 @@ namespace JobPortal.Api.Controllers
                 return Ok(new Response { Code = StatusCodes.Status200OK, Message = "Password updated successfully.." });
             }
             return BadRequest(new Response { Code = StatusCodes.Status400BadRequest, Message = "Incorect details.." });
+        }
+
+        [HttpGet]
+        [Route("Candidates")]
+        public IActionResult GetCandidates()
+        {
+            var candidates = _userService.GetCandidates();
+            if (!candidates.Any())
+            {
+                return NotFound(new Response { Code = StatusCodes.Status404NotFound, Message = "Data not found.." });
+            }
+            return Ok(new Response { Code = StatusCodes.Status200OK, Message = "Success", Data = candidates });
         }
 
         [HttpGet]

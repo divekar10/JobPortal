@@ -14,7 +14,6 @@ namespace JobPortal.Api.Controllers.Jobs
     [Route("api/[controller]")]
     [EnableCors("AllowOrigin")]
     [ApiController]
-    [Authorize]
     public class JobController : BaseController
     {
         private readonly IJobService _jobService;
@@ -24,6 +23,7 @@ namespace JobPortal.Api.Controllers.Jobs
         }
 
         [HttpPost]
+        [Authorize(Policy = "Restricted")]
         public async Task<IActionResult> Add(Job job)
         {
             var result = await _jobService.Add(job, UserId);
@@ -32,6 +32,7 @@ namespace JobPortal.Api.Controllers.Jobs
 
         [HttpPut]
         [Route("{id}")]
+        [Authorize(Policy = "Restricted")]
         public async Task<IActionResult> Update(Job job)
         {
             var result = await _jobService.Update(job);
@@ -40,6 +41,7 @@ namespace JobPortal.Api.Controllers.Jobs
 
         [HttpDelete]
         [Route("{id}")]
+        [Authorize(Policy = "Restricted")]
         public async Task<IActionResult> Delete(int id)
         {
             var result = await _jobService.Delete(id);
@@ -53,13 +55,15 @@ namespace JobPortal.Api.Controllers.Jobs
 
         [HttpGet]
         [Route("Jobs")]
+        [Authorize(Policy = "Allowed")]
         public async Task<IEnumerable<Job>> Get()
         {
             return await _jobService.GetJobs();
         }
 
         [HttpGet]
-        [Route("JobsPostedByMe/{id}")]
+        [Route("JobsPostedByMe")]
+        [Authorize(Policy = "Restricted")]
         public IActionResult GetMyJobs()
         {
            var jobs = _jobService.GetMyJobs(UserId);

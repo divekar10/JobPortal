@@ -31,7 +31,7 @@ namespace JobPortal.Service
             user.Name = entity.Name;
             user.Email = entity.Email.ToLower();
             user.Password = BCryptNet.HashPassword(entity.Password);
-            user.RoleId = entity.RoleId;
+            user.RoleId = 1;
             user.CreatedAt = DateTime.Now;
             user.IsActive = true;
             return await _userRepository.AddAsync(user);
@@ -105,11 +105,6 @@ namespace JobPortal.Service
             return _userRepository.GetCandidates();
         }
 
-        public IEnumerable<User> GetRecruiters()
-        {
-            return _userRepository.GetRecruiters();
-        }
-
         public async Task<User> GetUser(string email, string password)
         {
             try
@@ -148,9 +143,13 @@ namespace JobPortal.Service
             }
         }
 
-        public async Task<IEnumerable<User>> GetUsers()
+        public IEnumerable<User> GetUsers(PagedParameters pagedParameters)
         {
-            return await _userRepository.Get();
+            //return await _userRepository.Get();
+            return _userRepository.FindAll().OrderBy(user => user.Id)
+                                            .Skip((pagedParameters.PageNumber - 1) * pagedParameters.PageSize)
+                                            .Take(pagedParameters.PageSize)
+                                            .ToList();
         }
 
         public async Task<User> Update(User entity)
@@ -163,7 +162,7 @@ namespace JobPortal.Service
                 _user.Name = entity.Name;
                 _user.Email = entity.Email;
                 _user.Password = entity.Password;
-                _user.RoleId = entity.RoleId;
+                _user.RoleId = 1;
                 _user.IsActive = entity.IsActive;
                 _userRepository.Update(_user);
                 return _user;

@@ -63,5 +63,10 @@ namespace JobPortal.Database.Infra
         {
             return await JobDbContext.Set<T>().FindAsync(id);
         }
+
+        public IQueryable<T> FindAll()
+        {
+            return JobDbContext.Set<T>();
+        }
     }
 }

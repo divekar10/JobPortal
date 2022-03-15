@@ -16,7 +16,7 @@ namespace JobPortal.Database
         }
 
         public DbSet<User> User { get; set; }
-        public DbSet<Role> Roles{ get; set; }
+        public DbSet<Role> Role{ get; set; }
         public DbSet<Job> Job { get; set; }
         public DbSet<Applicant> Applicant { get; set; }
         public DbSet<UserOtp> UserOtp { get; set; }
