@@ -1,9 +1,8 @@
 ﻿using JobPortal.Database.Infra;
 using JobPortal.Model;
-using System;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace JobPortal.Database.Repo
@@ -15,11 +14,23 @@ namespace JobPortal.Database.Repo
 
         }
 
-        public IEnumerable<Job> GetMyJobs(int userId)
+        public async Task<IEnumerable<Job>> Jobs(PagedParameters pagedParameters)
         {
-            var myJobs = (from j in JobDbContext.Job
+            var jobs = await (from j in JobDbContext.Job
+                        select j)
+                        .Skip((pagedParameters.PageNumber - 1) * pagedParameters.PageSize)
+                        .Take(pagedParameters.PageSize)
+                        .ToListAsync();
+            return jobs;
+        }
+        public async Task<IEnumerable<Job>> GetMyJobs(int userId, PagedParameters pagedParameters)
+        {
+            var myJobs = await (from j in JobDbContext.Job
                           where j.CreatedBy == userId
-                          select j).ToList();
+                          select j)
+                          .Skip((pagedParameters.PageNumber -1 ) * pagedParameters.PageSize)
+                          .Take(pagedParameters.PageSize)
+                          .ToListAsync();
             return myJobs;
         }
     }

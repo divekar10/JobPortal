@@ -59,6 +59,11 @@ namespace JobPortal.Api
                 });
             });
 
+            services.Configure<ApiBehaviorOptions>(options =>
+            {
+                options.SuppressModelStateInvalidFilter = true;
+            });
+
             services.AddControllers();
 
             services.AddAuthentication(options =>
@@ -86,6 +91,7 @@ namespace JobPortal.Api
             {
                 options.AddPolicy("Restricted", policy => policy.RequireRole("Admin", "Recruiter"));
                 options.AddPolicy("Allowed", policy => policy.RequireRole("Admin", "Recruiter", "User"));
+                options.AddPolicy("Restricted2", policy => policy.RequireRole("Admin", "User"));
                 options.AddPolicy("Admin", policy => policy.RequireRole("Admin"));
             });
 

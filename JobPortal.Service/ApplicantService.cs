@@ -3,8 +3,6 @@ using JobPortal.Model;
 using JobPortal.Service.Notifications;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace JobPortal.Service
@@ -64,14 +62,14 @@ namespace JobPortal.Service
             return applicants;
         }
 
-        public async Task<IEnumerable<JobPostedApplicantDto>> GetAllApplicantAppliedToMyJobPosted(int userId)
+        public async Task<IEnumerable<JobPostedApplicantDto>> GetAllApplicantAppliedToMyJobPosted(int userId, PagedParameters pagedParameters)
         {
-            return await _applicantRepository.GetAllApplicantAppliedToMyJobPosted(userId);   
+            return await _applicantRepository.GetAllApplicantAppliedToMyJobPosted(userId, pagedParameters);   
         }
 
-        public async Task<IEnumerable<ApplicantDetailsDto>> GetAllApplicantJobApplied()
+        public async Task<IEnumerable<ApplicantDetailsDto>> GetAllApplicantJobApplied(PagedParameters pagedParameters)
         {
-            return await _applicantRepository.GetAllApplicantJobApplied();
+            return await _applicantRepository.GetAllApplicantJobApplied(pagedParameters);
         }
     }
 }

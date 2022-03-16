@@ -5,18 +5,11 @@ using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
-using System;
-using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
-using System.Security.Claims;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace JobPortal.Api.Controllers
 {
-    [Authorize]
     [Route("api/[controller]")]
     [EnableCors("AllowOrigin")]
     [ApiController]
@@ -32,31 +25,38 @@ namespace JobPortal.Api.Controllers
 
         [HttpGet]
         [Route("Users")]
-        public IActionResult Get([FromQuery] PagedParameters pagedParameters)
+        [Authorize(Policy ="Admin")]
+        public async Task<IActionResult> Get([FromQuery] PagedParameters pagedParameters)
         {
-            return Ok(_userService.GetUsers(pagedParameters));
+            return Ok(await _userService.GetUsers(pagedParameters));
         }
 
         [HttpPut]
         [Route("{id}")]
+        [Authorize(Policy = "Allowed")]
         public async Task<IActionResult> Update(User user)
         {
+            if (ModelState.IsValid)
+            {
             var result = await _userService.Update(user);
-            if(result != null)
-                return Ok(new Response { Code = StatusCodes.Status200OK, Message = "Details updated successfully..", Data = result});
+            if (result != null)
+                return Ok(new Response { Code = StatusCodes.Status200OK, Message = "Details updated successfully..", Data = result });
             return BadRequest(new Response { Code = StatusCodes.Status400BadRequest, Message = "Something went wrong", Data = result });
+            }
+            return BadRequest(ModelState);
         }
 
         [HttpDelete]
         [Route("{id}")]
+        [Authorize(Policy = "Allowed")]
         public async Task<IActionResult> Delete(int id)
         {
             var result = await _userService.Delete(id);
-            if(result == true)
+            if (result == true)
             {
                 return Ok(new Response { Code = StatusCodes.Status200OK, Message = "User deleted successfully.." });
             }
-            return NotFound(new Response { Code = StatusCodes.Status404NotFound, Message = "User not found.."});
+            return NotFound(new Response { Code = StatusCodes.Status404NotFound, Message = "User not found.." });
         }
 
         [HttpPost]
@@ -65,20 +65,20 @@ namespace JobPortal.Api.Controllers
         public async Task<IActionResult> ForgotPassword(string email)
         {
             var user = await _userService.ForgotPassword(email);
-            if(user == true)
+            if (user == true)
             {
                 return Ok(new Response { Code = StatusCodes.Status200OK, Message = "Otp sent to the register email address.." });
             }
             return NotFound(new Response { Code = StatusCodes.Status400BadRequest, Message = "Incorrect Details.." });
         }
-     
+
         [HttpPost]
         [Route("ResetPassword")]
         [AllowAnonymous]
         public async Task<IActionResult> ResetPassword(int otp, string newPassword, string confirmPassword)
         {
             var user = await _userService.ResetPassword(otp, newPassword, confirmPassword);
-            if(user != null)
+            if (user != null)
             {
                 return Ok(new Response { Code = StatusCodes.Status200OK, Message = "Password updated successfully.." });
             }
@@ -87,9 +87,10 @@ namespace JobPortal.Api.Controllers
 
         [HttpGet]
         [Route("Candidates")]
-        public IActionResult GetCandidates()
+        [Authorize(Policy = "Admin")]
+        public async Task<IActionResult> GetCandidates([FromQuery] PagedParameters pagedParameters)
         {
-            var candidates = _userService.GetCandidates();
+            var candidates = await _userService.GetCandidates(pagedParameters);
             if (!candidates.Any())
             {
                 return NotFound(new Response { Code = StatusCodes.Status404NotFound, Message = "Data not found.." });
@@ -99,9 +100,10 @@ namespace JobPortal.Api.Controllers
 
         [HttpGet]
         [Route("AppliedJobsByMe")]
-        public async Task<IActionResult> GetMyAllJobsApplied()
+        [Authorize(Policy = "Restricted2")]
+        public async Task<IActionResult> GetMyAllJobsApplied([FromQuery] PagedParameters pagedParameters)
         {
-            var jobs = await _userService.GetMyAllJobsApplied(UserId);
+            var jobs = await _userService.GetMyAllJobsApplied(UserId, pagedParameters);
             if (!jobs.Any())
             {
                 return NotFound(new Response { Code = StatusCodes.Status404NotFound, Message = "Data not found.." });

@@ -2,12 +2,8 @@
 using BCryptNet = BCrypt.Net.BCrypt;
 using JobPortal.Model;
 using JobPortal.Service.Notifications;
-using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace JobPortal.Service
@@ -100,9 +96,9 @@ namespace JobPortal.Service
             }
         }
 
-        public IEnumerable<User> GetCandidates()
+        public async Task<IEnumerable<User>> GetCandidates(PagedParameters pagedParameters)
         {
-            return _userRepository.GetCandidates();
+            return await _userRepository.GetCandidates(pagedParameters);
         }
 
         public async Task<User> GetUser(string email, string password)
@@ -143,13 +139,10 @@ namespace JobPortal.Service
             }
         }
 
-        public IEnumerable<User> GetUsers(PagedParameters pagedParameters)
+        public async Task<IEnumerable<User>> GetUsers(PagedParameters pagedParameters)
         {
             //return await _userRepository.Get();
-            return _userRepository.FindAll().OrderBy(user => user.Id)
-                                            .Skip((pagedParameters.PageNumber - 1) * pagedParameters.PageSize)
-                                            .Take(pagedParameters.PageSize)
-                                            .ToList();
+            return await _userRepository.GetUsers(pagedParameters);
         }
 
         public async Task<User> Update(User entity)
@@ -210,9 +203,9 @@ namespace JobPortal.Service
             return await _otpService.Validate(otp);
         }
 
-        public async Task<IEnumerable<AppliedJobDto>> GetMyAllJobsApplied(int userId)
+        public async Task<IEnumerable<AppliedJobDto>> GetMyAllJobsApplied(int userId, PagedParameters pagedParameters)
         {
-            return await _userRepository.GetMyAllJobsApplied(userId);
+            return await _userRepository.GetMyAllJobsApplied(userId, pagedParameters);
         }
 
         public async Task<bool> IsEmailAlreadyExist(string email)

@@ -1,15 +1,13 @@
 ﻿using JobPortal.Database.Infra;
 using JobPortal.Model;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace JobPortal.Database.Repo
 {
     public interface IJobRepository : IRepository<Job>
     {
-        IEnumerable<Job> GetMyJobs(int userId);
+        Task<IEnumerable<Job>> GetMyJobs(int userId, PagedParameters pagedParameters);
+        Task<IEnumerable<Job>> Jobs(PagedParameters pagedParameters);
     }
 }

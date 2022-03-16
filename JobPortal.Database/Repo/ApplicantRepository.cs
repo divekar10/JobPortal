@@ -1,10 +1,8 @@
 ﻿using JobPortal.Database.Infra;
 using JobPortal.Model;
 using Microsoft.EntityFrameworkCore;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace JobPortal.Database.Repo
@@ -16,7 +14,7 @@ namespace JobPortal.Database.Repo
                
         }
 
-        public async Task<IEnumerable<JobPostedApplicantDto>> GetAllApplicantAppliedToMyJobPosted(int userId)
+        public async Task<IEnumerable<JobPostedApplicantDto>> GetAllApplicantAppliedToMyJobPosted(int userId, PagedParameters pagedParameters)
         {
             var applicants = await (from a in JobDbContext.Applicant
                                     join u in JobDbContext.User on a.AppliedBy equals u.Id
@@ -29,11 +27,14 @@ namespace JobPortal.Database.Repo
                                         JobTitle = j.Title,
                                         RecruiterId = j.CreatedBy,
                                         RecruiterName = us.Name
-                                    }).Where(x => x.RecruiterId == userId).OrderByDescending(x => x.JobId).ToListAsync();
+                                    }).Where(x => x.RecruiterId == userId).OrderByDescending(x => x.JobId)
+                                      .Skip((pagedParameters.PageNumber - 1) * pagedParameters.PageSize)
+                                      .Take(pagedParameters.PageSize)
+                                      .ToListAsync();
             return applicants;
         }
 
-        public async Task<IEnumerable<ApplicantDetailsDto>> GetAllApplicantJobApplied()
+        public async Task<IEnumerable<ApplicantDetailsDto>> GetAllApplicantJobApplied(PagedParameters pagedParameters)
         {
             var getApplicants = await ( from a in JobDbContext.Applicant 
                                   join u in JobDbContext.User on a.AppliedBy equals u.Id
@@ -45,7 +46,9 @@ namespace JobPortal.Database.Repo
                                       JobTitle = j.Title,
                                       ApplicantName = u.Name,
                                       PostedBy = j.CreatedBy
-                                  }).OrderByDescending(x => x.JobId).ToListAsync();
+                                  }).OrderByDescending(x => x.JobId)
+                                    .Skip((pagedParameters.PageNumber - 1) * pagedParameters.PageSize)
+                                    .Take(pagedParameters.PageSize).ToListAsync();
             return getApplicants;
         }
     }

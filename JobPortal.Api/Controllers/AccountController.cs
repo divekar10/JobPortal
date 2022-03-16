@@ -8,7 +8,6 @@ using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
@@ -34,20 +33,24 @@ namespace JobPortal.Api.Controllers
         [Route("Register")]
         public async Task<IActionResult> Register(User user)
         {
-            var isExist = await _userService.IsEmailAlreadyExist(user.Email);
-            if(isExist == true) {
-                return BadRequest(new Response { Code = StatusCodes.Status400BadRequest, Message = "Email Already exist.." });
-            }
-            else
+            if (ModelState.IsValid)
             {
-                var result = await _userService.Add(user);
-                return Ok(new Response { Code = StatusCodes.Status200OK, Message = "Account successfully created...", Data = result });
+                var isExist = await _userService.IsEmailAlreadyExist(user.Email);
+                if (isExist == true)
+                {
+                    return BadRequest(new Response { Code = StatusCodes.Status400BadRequest, Message = "Email Already exist.." });
+                }
+                else
+                {
+                    var result = await _userService.Add(user);
+                    return Ok(new Response { Code = StatusCodes.Status200OK, Message = "Account successfully created...", Data = result });
+                }
             }
+            return BadRequest(ModelState);
         }
 
         [HttpPost]
         [Route("Login")]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Login(Login model)
         {
             var user = await _userService.GetUser(model.Email, model.Password);

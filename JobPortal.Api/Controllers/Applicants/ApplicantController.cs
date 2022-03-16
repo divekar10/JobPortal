@@ -4,39 +4,11 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using System.Web.Http.ModelBinding;
 
 namespace JobPortal.Api.Controllers.Applicants
 {
-    //public class Error
-    //{
-    //    public Error(string key, string message)
-    //    {
-    //        Key = key;
-    //        Message = message;
-    //    }
-
-    //    public string Key { get; set; }
-    //    public string Message { get; set; }
-    //}
-    //public static class Utils
-    //{
-    //    public static IEnumerable<Error> AllErrors(this ModelStateDictionary modelState)
-    //    {
-    //        var result = from ms in modelState
-    //                     where ms.Value.Errors.Any()
-    //                     let fieldKey = ms.Key
-    //                     let errors = ms.Value.Errors
-    //                     from error in errors
-    //                     select new Error(fieldKey, error.ErrorMessage);
-
-    //        return result;
-    //    }
-    //}
     [Route("api/[controller]")]
     [EnableCors("AllowOrigin")]
     [ApiController]
@@ -66,17 +38,17 @@ namespace JobPortal.Api.Controllers.Applicants
         [HttpGet]
         [Route("AllApplicantJobApplied")]
         [Authorize(Policy = "Restricted")]
-        public async Task<IEnumerable<ApplicantDetailsDto>> GetAllApplicantJobApplied()
+        public async Task<IEnumerable<ApplicantDetailsDto>> GetAllApplicantJobApplied([FromQuery] PagedParameters pagedParameters)
         {
-            return await _applicantService.GetAllApplicantJobApplied();
+            return await _applicantService.GetAllApplicantJobApplied(pagedParameters);
         }
 
         [HttpGet]
         [Route("ApplicantsAppliedToRecruiterJob/{id}")]
         [Authorize(Policy = "Restricted")]
-        public async Task<IEnumerable<JobPostedApplicantDto>> GetAllApplicantAppliedToMyJobPosted()
+        public async Task<IEnumerable<JobPostedApplicantDto>> GetAllApplicantAppliedToMyJobPosted([FromQuery] PagedParameters pagedParameters)
         {
-            return await _applicantService.GetAllApplicantAppliedToMyJobPosted(UserId);
+            return await _applicantService.GetAllApplicantAppliedToMyJobPosted(UserId, pagedParameters);
         }
     }
 }

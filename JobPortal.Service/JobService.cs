@@ -2,8 +2,6 @@
 using JobPortal.Model;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace JobPortal.Service
@@ -44,14 +42,14 @@ namespace JobPortal.Service
             return false;
         }
 
-        public async Task<IEnumerable<Job>> GetJobs()
+        public async Task<IEnumerable<Job>> GetJobs(PagedParameters pagedParameters)
         {
-            return await _jobRepository.Get();
+            return await _jobRepository.Jobs(pagedParameters);
         }
 
-        public IEnumerable<Job> GetMyJobs(int userId)
+        public async Task<IEnumerable<Job>> GetMyJobs(int userId, PagedParameters pagedParameters)
         {
-            return _jobRepository.GetMyJobs(userId);
+            return await _jobRepository.GetMyJobs(userId, pagedParameters);
         }
 
         public async Task<Job> Update(Job entity)

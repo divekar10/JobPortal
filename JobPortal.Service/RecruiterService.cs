@@ -1,9 +1,8 @@
 ﻿using JobPortal.Database.Repo;
+using BCryptNet = BCrypt.Net.BCrypt;
 using JobPortal.Model;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace JobPortal.Service
@@ -22,7 +21,7 @@ namespace JobPortal.Service
             var user = new User();
             user.Name = entity.Name;
             user.Email = entity.Email;
-            user.Password = entity.Password;
+            user.Password = BCryptNet.HashPassword(entity.Password);
             user.RoleId = 2;
             user.CreatedAt = DateTime.Now;
             user.IsActive = true;
@@ -35,9 +34,9 @@ namespace JobPortal.Service
             }
         }
 
-        public IEnumerable<User> GetRecruiters()
+        public async Task<IEnumerable<User>> GetRecruiters(PagedParameters pagedParameters)
         {
-            return _userRepository.GetRecruiters();
+            return await _userRepository.GetRecruiters(pagedParameters);
         }
     }
 }

@@ -15,4 +15,8 @@
     <ProjectReference Include="..\JobPortal.Service\JobPortal.Service.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Filters\" />
+  </ItemGroup>
+
 </Project>

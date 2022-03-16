@@ -1,17 +1,15 @@
 ﻿using JobPortal.Database.Infra;
 using JobPortal.Model;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace JobPortal.Database.Repo
 {
     public interface IUserRepository : IRepository<User>
     {
-        IEnumerable<User> GetRecruiters();
-        IEnumerable<User> GetCandidates();
-        Task<IEnumerable<AppliedJobDto>> GetMyAllJobsApplied(int userId);
+        Task<IEnumerable<User>> GetRecruiters(PagedParameters pagedParameters);
+        Task<IEnumerable<User>> GetCandidates(PagedParameters pagedParameters);
+        Task<IEnumerable<User>> GetUsers(PagedParameters pagedParameters);
+        Task<IEnumerable<AppliedJobDto>> GetMyAllJobsApplied(int userId, PagedParameters pagedParameters);
     }
 }

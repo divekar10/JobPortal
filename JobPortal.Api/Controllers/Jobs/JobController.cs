@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -56,17 +55,17 @@ namespace JobPortal.Api.Controllers.Jobs
         [HttpGet]
         [Route("Jobs")]
         [Authorize(Policy = "Allowed")]
-        public async Task<IEnumerable<Job>> Get()
+        public async Task<IEnumerable<Job>> Get([FromQuery] PagedParameters pagedParameters)
         {
-            return await _jobService.GetJobs();
+            return await _jobService.GetJobs(pagedParameters);
         }
 
         [HttpGet]
         [Route("JobsPostedByMe")]
         [Authorize(Policy = "Restricted")]
-        public IActionResult GetMyJobs()
+        public async Task<IActionResult> GetMyJobs([FromQuery] PagedParameters pagedParameters)
         {
-           var jobs = _jobService.GetMyJobs(UserId);
+           var jobs = await _jobService.GetMyJobs(UserId, pagedParameters);
 
             if(!jobs.Any())
             {
