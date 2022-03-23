@@ -22,25 +22,33 @@ namespace JobPortal.Api.Controllers.Jobs
         }
 
         [HttpPost]
-        [Authorize(Policy = "Restricted")]
+        [Authorize(Policy = "AdminRecruiterOnly")]
         public async Task<IActionResult> Add(Job job)
         {
-            var result = await _jobService.Add(job, UserId);
-            return Ok(new Response { Code = StatusCodes.Status200OK, Message = "Job successfully created...", Data = result });
+            if (ModelState.IsValid)
+            {
+                var result = await _jobService.Add(job, UserId);
+                return Ok(new Response { Code = StatusCodes.Status200OK, Message = "Job successfully created...", Data = result });
+            }
+            return BadRequest(ModelState);
         }
 
         [HttpPut]
         [Route("{id}")]
-        [Authorize(Policy = "Restricted")]
+        [Authorize(Policy = "AdminRecruiterOnly")]
         public async Task<IActionResult> Update(Job job)
         {
-            var result = await _jobService.Update(job);
-            return Ok(new Response { Code = StatusCodes.Status200OK, Message = "Details updated successfully..", Data = result });
+            if (ModelState.IsValid)
+            {
+                var result = await _jobService.Update(job);
+                return Ok(new Response { Code = StatusCodes.Status200OK, Message = "Details updated successfully..", Data = result });
+            }
+            return BadRequest(ModelState);
         }
 
         [HttpDelete]
         [Route("{id}")]
-        [Authorize(Policy = "Restricted")]
+        [Authorize(Policy = "AdminRecruiterOnly")]
         public async Task<IActionResult> Delete(int id)
         {
             var result = await _jobService.Delete(id);
@@ -54,7 +62,7 @@ namespace JobPortal.Api.Controllers.Jobs
 
         [HttpGet]
         [Route("Jobs")]
-        [Authorize(Policy = "Allowed")]
+        [Authorize(Policy = "AllAllowed")]
         public async Task<IEnumerable<Job>> Get([FromQuery] PagedParameters pagedParameters)
         {
             return await _jobService.GetJobs(pagedParameters);
@@ -62,7 +70,7 @@ namespace JobPortal.Api.Controllers.Jobs
 
         [HttpGet]
         [Route("JobsPostedByMe")]
-        [Authorize(Policy = "Restricted")]
+        [Authorize(Policy = "AdminRecruiterOnly")]
         public async Task<IActionResult> GetMyJobs([FromQuery] PagedParameters pagedParameters)
         {
            var jobs = await _jobService.GetMyJobs(UserId, pagedParameters);

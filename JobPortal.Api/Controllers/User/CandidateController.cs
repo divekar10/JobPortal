@@ -33,7 +33,7 @@ namespace JobPortal.Api.Controllers
 
         [HttpPut]
         [Route("{id}")]
-        [Authorize(Policy = "Allowed")]
+        [Authorize(Policy = "AllAllowed")]
         public async Task<IActionResult> Update(User user)
         {
             if (ModelState.IsValid)
@@ -48,7 +48,7 @@ namespace JobPortal.Api.Controllers
 
         [HttpDelete]
         [Route("{id}")]
-        [Authorize(Policy = "Allowed")]
+        [Authorize(Policy = "AllAllowed")]
         public async Task<IActionResult> Delete(int id)
         {
             var result = await _userService.Delete(id);
@@ -100,7 +100,7 @@ namespace JobPortal.Api.Controllers
 
         [HttpGet]
         [Route("AppliedJobsByMe")]
-        [Authorize(Policy = "Restricted2")]
+        [Authorize(Policy = "AdminUserOnly")]
         public async Task<IActionResult> GetMyAllJobsApplied([FromQuery] PagedParameters pagedParameters)
         {
             var jobs = await _userService.GetMyAllJobsApplied(UserId, pagedParameters);

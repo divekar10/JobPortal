@@ -82,7 +82,7 @@ namespace JobPortal.Api.Controllers
                     expiration = token.ValidTo
                 });
             }
-            return Unauthorized();
+            return Unauthorized(new Response { Code = StatusCodes.Status401Unauthorized, Message = "Invalid Email or password"});
         }
     }
 }
