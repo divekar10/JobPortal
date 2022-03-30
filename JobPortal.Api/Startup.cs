@@ -1,3 +1,7 @@
+using AspNetCoreRateLimit;
+using AspNetCoreRateLimit.Redis;
+using JobPortal.Api.Filters;
+using JobPortal.Api.Filters.RateLimiting;
 using JobPortal.Database;
 using JobPortal.Database.Repo;
 using JobPortal.Service;
@@ -14,6 +18,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using StackExchange.Redis;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -63,8 +68,22 @@ namespace JobPortal.Api
             {
                 options.SuppressModelStateInvalidFilter = true;
             });
+            services.AddOptions();
+            services.AddMemoryCache();
+
+            //services.Configure<IpRateLimitOptions>(Configuration.GetSection("IpRateLimiting"));
+            //services.Configure<IpRateLimitPolicies>(Configuration.GetSection("IpRateLimitPolicies"));
+
+            services.Configure<ClientRateLimitOptions>(Configuration.GetSection("ClientRateLimiting"));
+            services.Configure<ClientRateLimitPolicies>(Configuration.GetSection("ClientLimitPolicies"));
+
+            services.AddInMemoryRateLimiting();
 
             services.AddControllers();
+
+            services.AddControllersWithViews()
+            .AddNewtonsoftJson(options =>
+            options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
 
             services.AddAuthentication(options =>
             {
@@ -95,6 +114,7 @@ namespace JobPortal.Api
                 options.AddPolicy("Admin", policy => policy.RequireRole("Admin"));
             });
 
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "JobPortal.Api", Version = "v1" });
@@ -124,11 +144,17 @@ namespace JobPortal.Api
                     }
                 });
             });
+
+            //services.AddSingleton<IRateLimitConfiguration, RateLimitConfiguration>();
+            services.AddSingleton<IRateLimitConfiguration, CustomRateLimitingConfiguration>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            //app.UseIpRateLimiting();
+            app.UseClientRateLimiting();
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

@@ -23,14 +23,14 @@ namespace JobPortal.Service
         {
             try
             {
-            var user = new User();
-            user.Name = entity.Name;
-            user.Email = entity.Email.ToLower();
-            user.Password = BCryptNet.HashPassword(entity.Password);
-            user.RoleId = 1;
-            user.CreatedAt = DateTime.Now;
-            user.IsActive = true;
-            return await _userRepository.AddAsync(user);
+                var user = new User();
+                user.Name = entity.Name;
+                user.Email = entity.Email.ToLower();
+                user.Password = BCryptNet.HashPassword(entity.Password);
+                user.RoleId = 1;
+                user.CreatedAt = DateTime.Now;
+                user.IsActive = true;
+                return await _userRepository.AddAsync(user);
             }
             catch (Exception ex)
             {
@@ -47,7 +47,7 @@ namespace JobPortal.Service
         public async Task<bool> Delete(int id)
         {
             User userId = await _userRepository.GetById(id);
-            if(userId != null)
+            if (userId != null)
             {
                 _userRepository.Delete(userId);
                 return true;
@@ -56,39 +56,37 @@ namespace JobPortal.Service
         }
 
         public async Task<bool> ForgotPassword(string email)
-        {     
+        {
             try
             {
-            var user = await GetUserByMail(email);
-            if(user != null)
-            {
-                regenerate:
-                var otp = Convert.ToInt32(GenerateRandomNo());
-                var isUnique = await _otpService.IsOtpUnique(otp);
-                    if (isUnique == false)
-                    {
+                var user = await GetUserByMail(email);
+                if (user != null)
+                {
+                    regenerate:
+                    var otp = Convert.ToInt32(GenerateRandomNo());
+                    var isUnique = await _otpService.IsOtpUnique(otp);
+                    if (!isUnique)
                         goto regenerate;
-                    }
 
-                var to = user.Email;
-                var sub = "OTP";
+                    var to = user.Email;
+                    var sub = "OTP";
                     var body = "";
                     body += "<h3>Job Portal</h3>";
                     body += $"<h4 style='font-size:1.1em'>Hi, {user.Name}</h4>";
                     body += "<h5>For Reseting your password, OTP is valid for 10 minutes</h5>";
                     body += $"<h2 style='background: #00466a;margin: 0 auto;width: max-content;padding: 0 10px;color: #fff;border-radius: 4px;'>{otp}</h2>";
-                   
-                    var userOtp = new UserOtp();
-                userOtp.Otp = Convert.ToInt32(otp);
-                userOtp.UserId = user.Id;
-                userOtp.CreatedAt = DateTime.Now;
-                userOtp.ExpireAt = DateTime.Now.AddMinutes(10);
 
-                await _otpService.Add(userOtp);
-                await _emailSender.SendEmailAsync(to,sub,body);
-                return true;
-            }
-            return false;
+                    var userOtp = new UserOtp();
+                    userOtp.Otp = Convert.ToInt32(otp);
+                    userOtp.UserId = user.Id;
+                    userOtp.CreatedAt = DateTime.Now;
+                    userOtp.ExpireAt = DateTime.Now.AddMinutes(10);
+
+                    await _otpService.Add(userOtp);
+                    await _emailSender.SendEmailAsync(to, sub, body);
+                    return true;
+                }
+                return false;
             }
             catch (Exception ex)
             {
@@ -106,9 +104,9 @@ namespace JobPortal.Service
             try
             {
                 var user = await _userRepository.GetDefault(x => x.Email == email);
-                if(user != null)
+                if (user != null)
                 {
-                    if(!BCryptNet.Verify(password, user.Password))
+                    if (!BCryptNet.Verify(password, user.Password))
                     {
                         return null;
                     }
@@ -127,7 +125,7 @@ namespace JobPortal.Service
             try
             {
                 var user = await _userRepository.GetDefault(x => x.Email == email);
-                if(user != null)
+                if (user != null)
                 {
                     return user;
                 }
@@ -149,18 +147,18 @@ namespace JobPortal.Service
         {
             try
             {
-            User _user = await _userRepository.GetById(entity.Id);
-            if(_user != null)
-            {
-                _user.Name = entity.Name;
-                _user.Email = entity.Email;
-                _user.Password = entity.Password;
-                _user.RoleId = 1;
-                _user.IsActive = entity.IsActive;
-                _userRepository.Update(_user);
+                User _user = await _userRepository.GetById(entity.Id);
+                if (_user != null)
+                {
+                    _user.Name = entity.Name;
+                    _user.Email = entity.Email;
+                    _user.Password = entity.Password;
+                    _user.RoleId = 1;
+                    _user.IsActive = entity.IsActive;
+                    _userRepository.Update(_user);
+                    return _user;
+                }
                 return _user;
-            }
-            return _user;
             }
             catch (Exception ex)
             {
@@ -178,19 +176,19 @@ namespace JobPortal.Service
         {
             try
             {
-            var details = await ValidateOtp(otp);
-            var updateUser = new User();
-            if (details != null)
-            {
-                updateUser = await _userRepository.GetById(details.UserId);
-                if (newPassword == confirmPassword)
+                var details = await ValidateOtp(otp);
+                var updateUser = new User();
+                if (details != null)
                 {
-                    updateUser.Password = BCryptNet.HashPassword(newPassword);
-                    _userRepository.Update(updateUser);
-                    return updateUser;
+                    updateUser = await _userRepository.GetById(details.UserId);
+                    if (newPassword == confirmPassword)
+                    {
+                        updateUser.Password = BCryptNet.HashPassword(newPassword);
+                        _userRepository.Update(updateUser);
+                        return updateUser;
+                    }
                 }
-            }
-            return null;
+                return null;
             }
             catch (Exception ex)
             {

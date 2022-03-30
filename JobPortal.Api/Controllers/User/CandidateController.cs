@@ -1,4 +1,5 @@
-﻿using JobPortal.Model;
+﻿using JobPortal.Api.Filters;
+using JobPortal.Model;
 using JobPortal.Service;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
@@ -48,7 +49,7 @@ namespace JobPortal.Api.Controllers
 
         [HttpDelete]
         [Route("{id}")]
-        [Authorize(Policy = "AllAllowed")]
+        [Authorize(Policy = "Admin")]
         public async Task<IActionResult> Delete(int id)
         {
             var result = await _userService.Delete(id);

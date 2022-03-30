@@ -30,10 +30,8 @@ namespace JobPortal.Service
 
         public async Task<bool> IsOtpUnique(int otp)
         {
-            var IsUnique = await _otpRepository.GetDefault(x => x.Otp == otp);
-            if (IsUnique == null)
-                return true;
-            return false;
+            var isUnique = await _otpRepository.GetDefault(x => x.Otp == otp);
+            return isUnique == null ? true : false;
         }
     }
 }
