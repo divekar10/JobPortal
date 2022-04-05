@@ -2,6 +2,7 @@ using AspNetCoreRateLimit;
 using AspNetCoreRateLimit.Redis;
 using JobPortal.Api.Filters;
 using JobPortal.Api.Filters.RateLimiting;
+using JobPortal.Api.Service;
 using JobPortal.Database;
 using JobPortal.Database.Repo;
 using JobPortal.Service;
@@ -41,19 +42,6 @@ namespace JobPortal.Api
         {
             services.AddDbContext<JobDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("ConnectionString")));
 
-            services.AddScoped<IUserRepository, UserRepository>();
-            services.AddScoped<IUserService, UserService>();
-            services.AddScoped<IJobRepository, JobRepository>();
-            services.AddScoped<IJobService, JobService>();
-            services.AddScoped<IApplicantRepository, ApplicantRepository>();
-            services.AddScoped<IApplicantService, ApplicantService>();
-            services.AddScoped<IEmailSender, Notification>();
-            services.AddScoped<IOtpRepository, OtpRepository>();
-            services.AddScoped<IOtpService, OtpService>();
-            services.AddScoped<IRoleRepository, RoleRepository>();
-            services.AddScoped<IRoleService, RoleService>();
-            services.AddScoped<IRecruiterService, RecruiterService>();
-
             services.AddCors(c =>
             {
                 c.AddPolicy("AllowOrigin", builder =>
@@ -81,7 +69,11 @@ namespace JobPortal.Api
 
             services.AddControllers();
 
-            services.AddControllersWithViews()
+            services.AddSpaStaticFiles(configuration =>
+            {
+                configuration.RootPath = "FrontEnd/dist";
+            });
+                services.AddControllersWithViews()
             .AddNewtonsoftJson(options =>
             options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
 
@@ -145,6 +137,8 @@ namespace JobPortal.Api
                 });
             });
 
+            services.AddRepositories()
+                    .AddServices();
             //services.AddSingleton<IRateLimitConfiguration, RateLimitConfiguration>();
             services.AddSingleton<IRateLimitConfiguration, CustomRateLimitingConfiguration>();
         }
@@ -177,6 +171,12 @@ namespace JobPortal.Api
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+            });
+
+            app.UseSpaStaticFiles();
+            app.UseSpa(spa =>
+            {
+                spa.Options.SourcePath = "FrontEnd";
             });
         }
     }
