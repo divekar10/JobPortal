@@ -5,6 +5,7 @@ using JobPortal.Service.Notifications;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Serilog;
 
 namespace JobPortal.Service
 {
@@ -34,25 +35,44 @@ namespace JobPortal.Service
             }
             catch (Exception ex)
             {
-                throw ex;
+                Log.Error("Error occurred : {0}", ex);
             }
+            return null;
         }
 
         public async Task<IEnumerable<User>> AddUsers(List<User> entities)
         {
-            IEnumerable<User> user = await _userRepository.AddAsync(entities);
-            return user;
+            try
+            {
+                IEnumerable<User> user = await _userRepository.AddAsync(entities);
+                return user;
+            }
+            catch (Exception ex)
+            {
+                Log.Error("Error occurred : {0}", ex);
+            }
+            return null;
+            
         }
 
         public async Task<bool> Delete(int id)
         {
-            User userId = await _userRepository.GetById(id);
-            if (userId != null)
+            try
             {
-                _userRepository.Delete(userId);
-                return true;
+                User userId = await _userRepository.GetById(id);
+                if (userId != null)
+                {
+                    _userRepository.Delete(userId);
+                    return true;
+                }
+                return false;
+            }
+            catch (Exception ex)
+            {
+                Log.Error("Error occurred : {0}", ex);
             }
             return false;
+            
         }
 
         public async Task<bool> ForgotPassword(string email)
@@ -90,8 +110,9 @@ namespace JobPortal.Service
             }
             catch (Exception ex)
             {
-                throw ex;
+                Log.Error(ex.Message.ToString());
             }
+            return false;
         }
 
         public async Task<IEnumerable<User>> GetCandidates(PagedParameters pagedParameters)
@@ -116,8 +137,9 @@ namespace JobPortal.Service
             }
             catch (Exception ex)
             {
-                throw ex;
+               Log.Error("Error occurred : {0}", ex);
             }
+            return null;
         }
 
         public async Task<User> GetUserByMail(string email)
@@ -133,8 +155,9 @@ namespace JobPortal.Service
             }
             catch (Exception ex)
             {
-                throw ex;
+                Log.Error("Error occurred : {0}", ex);
             }
+            return null;
         }
 
         public async Task<IEnumerable<User>> GetUsers(PagedParameters pagedParameters)
@@ -162,8 +185,9 @@ namespace JobPortal.Service
             }
             catch (Exception ex)
             {
-                throw ex;
+                Log.Error("Error occurred : {0}", ex);
             }
+            return null;
         }
 
         private static Random _random = new Random();
@@ -192,8 +216,9 @@ namespace JobPortal.Service
             }
             catch (Exception ex)
             {
-                throw ex;
+                Log.Error("Error occurred : {0}", ex);
             }
+            return null;
         }
 
         private async Task<UserOtp> ValidateOtp(int otp)

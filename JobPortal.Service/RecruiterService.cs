@@ -4,6 +4,7 @@ using JobPortal.Model;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Serilog;
 
 namespace JobPortal.Service
 {
@@ -29,9 +30,9 @@ namespace JobPortal.Service
             }
             catch (Exception ex)
             {
-
-                throw ex;
+                Log.Error("Error occurred : {0}", ex);
             }
+            return null;
         }
 
         public async Task<IEnumerable<User>> GetRecruiters(PagedParameters pagedParameters)

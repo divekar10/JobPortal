@@ -1,5 +1,6 @@
 ﻿using JobPortal.Database.Repo;
 using JobPortal.Model;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -15,14 +16,22 @@ namespace JobPortal.Service
         }
         public async Task<Job> Add(Job entity, int userId)
         {
-            var _job = new Job();
-            _job.Title = entity.Title;
-            _job.Description = entity.Description;
-            _job.CreatedBy = userId;
-            _job.CreatedAt = DateTime.Now;
-            _job.EndAt = DateTime.Now.AddMonths(1);
-            _job.IsActive = true;
-            return await _jobRepository.AddAsync(_job);
+            try
+            {
+                var _job = new Job();
+                _job.Title = entity.Title;
+                _job.Description = entity.Description;
+                _job.CreatedBy = userId;
+                _job.CreatedAt = DateTime.Now;
+                _job.EndAt = DateTime.Now.AddMonths(1);
+                _job.IsActive = true;
+                return await _jobRepository.AddAsync(_job);
+            }
+            catch(Exception ex)
+            {
+                Log.Error("Error occurred : {0}", ex);
+            }
+            return null;
         }
 
         public async Task<IEnumerable<Job>> AddJobs(List<Job> entities)
@@ -33,11 +42,19 @@ namespace JobPortal.Service
 
         public async Task<bool> Delete(int id)
         {
-            var jobId = await _jobRepository.GetById(id);
-            if(jobId != null)
+            try
             {
-                _jobRepository.Delete(jobId);
-                return true;
+                var jobId = await _jobRepository.GetById(id);
+                if (jobId != null)
+                {
+                    _jobRepository.Delete(jobId);
+                    return true;
+                }
+                return false;
+            }
+            catch(Exception ex)
+            {
+                Log.Error("Error occurred : {0}", ex);
             }
             return false;
         }
@@ -54,19 +71,27 @@ namespace JobPortal.Service
 
         public async Task<Job> Update(Job entity)
         {
-            var _job = await _jobRepository.GetById(entity.Id);
-            if(_job != null)
+            try
             {
-                _job.Title = entity.Title;
-                _job.Description = entity.Description;
-                _job.CreatedBy = entity.CreatedBy;
-                _job.CreatedAt = _job.CreatedAt;
-                _job.EndAt = entity.EndAt;
-                _job.IsActive = entity.IsActive;
-                _jobRepository.Update(_job);
-                return _job;
+                var _job = await _jobRepository.GetById(entity.Id);
+                if (_job != null)
+                {
+                    _job.Title = entity.Title;
+                    _job.Description = entity.Description;
+                    _job.CreatedBy = entity.CreatedBy;
+                    _job.CreatedAt = _job.CreatedAt;
+                    _job.EndAt = entity.EndAt;
+                    _job.IsActive = entity.IsActive;
+                    _jobRepository.Update(_job);
+                    return _job;
+                }
+                return entity;
             }
-            return entity;
+            catch(Exception ex)
+            {
+                Log.Error("Error occurred : {0}", ex);
+            }
+            return null;
         }
     }
 }

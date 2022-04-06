@@ -1,11 +1,11 @@
-﻿using JobPortal.Api.Filters;
-using JobPortal.Model;
+﻿using JobPortal.Model;
 using JobPortal.Service;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
+using Serilog;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -17,11 +17,9 @@ namespace JobPortal.Api.Controllers
     public class CandidateController : BaseController
     {
         private readonly IUserService _userService;
-        private readonly IConfiguration _configuration;
-        public CandidateController(IUserService userService, IConfiguration configuration)
+        public CandidateController(IUserService userService)
         {
             _userService = userService;
-            _configuration = configuration;
         }
 
         [HttpGet]
@@ -32,7 +30,7 @@ namespace JobPortal.Api.Controllers
             return Ok(await _userService.GetUsers(pagedParameters));
         }
 
-        [HttpPut]
+        [HttpPut] 
         [Route("{id}")]
         [Authorize(Policy = "AllAllowed")]
         public async Task<IActionResult> Update(User user)
@@ -91,12 +89,13 @@ namespace JobPortal.Api.Controllers
         [Authorize(Policy = "Admin")]
         public async Task<IActionResult> GetCandidates([FromQuery] PagedParameters pagedParameters)
         {
-            var candidates = await _userService.GetCandidates(pagedParameters);
-            if (!candidates.Any())
-            {
-                return NotFound(new Response { Code = StatusCodes.Status404NotFound, Message = "Data not found.." });
-            }
-            return Ok(new Response { Code = StatusCodes.Status200OK, Message = "Success", Data = candidates });
+                Log.Information("Candidates");
+                var candidates = await _userService.GetCandidates(pagedParameters);
+                if (!candidates.Any())
+                {
+                    return NotFound(new Response { Code = StatusCodes.Status404NotFound, Message = "Data not found.." });
+                }
+                return Ok(new Response { Code = StatusCodes.Status200OK, Message = "Success", Data = candidates });
         }
 
         [HttpGet]

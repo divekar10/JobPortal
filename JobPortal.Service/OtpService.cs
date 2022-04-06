@@ -1,5 +1,6 @@
 ﻿using JobPortal.Database.Repo;
 using JobPortal.Model;
+using Serilog;
 using System;
 using System.Threading.Tasks;
 
@@ -20,12 +21,28 @@ namespace JobPortal.Service
         }
         public async Task<UserOtp> Add(UserOtp entity)
         {
-            return await _otpRepository.AddAsync(entity);   
+            try
+            {
+                return await _otpRepository.AddAsync(entity);
+            }
+            catch(Exception ex)
+            {
+                Log.Error("Error occurred : {0}", ex);
+            }
+            return null;
         }
 
         public async Task<UserOtp> Validate(int otp)
         {
-           return await _otpRepository.GetDefault(x => x.Otp == otp && x.ExpireAt >= DateTime.Now);
+            try
+            {
+                return await _otpRepository.GetDefault(x => x.Otp == otp && x.ExpireAt >= DateTime.Now);
+            }
+            catch(Exception ex)
+            {
+                Log.Error("Error occurred : {0}", ex);
+            }
+            return null;
         }
 
         public async Task<bool> IsOtpUnique(int otp)

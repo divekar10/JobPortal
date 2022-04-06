@@ -1,6 +1,7 @@
 ﻿using JobPortal.Database.Repo;
 using JobPortal.Model;
 using JobPortal.Service.Notifications;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -52,8 +53,9 @@ namespace JobPortal.Service
             }
             catch (Exception ex)
             {
-                throw ex;
+                Log.Error("Error occurred : {0}", ex);
             }
+            return null;
         }
 
         public async Task<IEnumerable<Applicant>> Apply(List<Applicant> entities)
