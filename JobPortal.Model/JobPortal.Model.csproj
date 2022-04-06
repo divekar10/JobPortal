@@ -11,6 +11,7 @@
     <PackageReference Include="Serilog.Filters.Expressions" Version="2.1.0" />
     <PackageReference Include="Serilog.Settings.Configuration" Version="3.3.0" />
     <PackageReference Include="Serilog.Sinks.MSSqlServer" Version="5.5.1" />
+    <PackageReference Include="Serilog.Sinks.MSSqlServerCore" Version="1.1.1" />
   </ItemGroup>
 
 </Project>

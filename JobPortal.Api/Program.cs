@@ -22,23 +22,45 @@ namespace JobPortal.Api
 
         public static void Main(string[] args)
         {
-            string connectionString = Configuration.GetConnectionString("ConnectionString");
+            string connectionStrings = Configuration.GetConnectionString("ConnectionString");
 
-            var columnOptions = new ColumnOptions
+            var informationSinkOpt = new MSSqlServerSinkOptions
+        {
+            TableName = "WebApiLogs",
+        };
+
+            var debugSinkOpt = new MSSqlServerSinkOptions
             {
-                AdditionalColumns = new Collection<SqlColumn>
-                {
-                    new SqlColumn("UserId",SqlDbType.Int)
-                }
+                TableName = "ErrorLogs",
             };
 
             Log.Logger = new LoggerConfiguration()
-                .Enrich.FromLogContext()
-                .WriteTo.MSSqlServer(connectionString,
-                sinkOptions: new SinkOptions { TableName = "WebApiLogs" }
-                , null, null, LogEventLevel.Information, null, columnOptions: columnOptions, null, null)
-                .MinimumLevel.Override("Microsoft", LogEventLevel.Error)
-                .CreateLogger();
+            .MinimumLevel.Debug()
+            .WriteTo.Conditional(
+                ev =>
+                {
+                    // We want to only log information level logs to this table
+                    bool isInformation = ev.Level == LogEventLevel.Information;
+                    if (isInformation) { return true; }
+                    return false;
+                },
+                wt => wt.MSSqlServer(
+                    connectionString: connectionStrings,
+                    sinkOptions: informationSinkOpt
+                    )
+            )
+            .WriteTo.Conditional(
+                ev => {
+                    // We want to only log debug level logs to this table
+                    bool isDebug = ev.Level == LogEventLevel.Error;
+                    if (isDebug) { return true; }
+                    return false;
+                },
+                wt => wt.MSSqlServer(
+                    connectionString: connectionStrings,
+                    sinkOptions: debugSinkOpt)
+            )
+            .CreateLogger();
 
             CreateHostBuilder(args).Build().Run();
         }

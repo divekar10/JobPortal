@@ -27,6 +27,7 @@ namespace JobPortal.Api.Controllers
         [Authorize(Policy ="Admin")]
         public async Task<IActionResult> Get([FromQuery] PagedParameters pagedParameters)
         {
+            Log.Information("{0}", HttpContext.Request.Path);
             return Ok(await _userService.GetUsers(pagedParameters));
         }
 
@@ -89,7 +90,6 @@ namespace JobPortal.Api.Controllers
         [Authorize(Policy = "Admin")]
         public async Task<IActionResult> GetCandidates([FromQuery] PagedParameters pagedParameters)
         {
-                Log.Information("Candidates");
                 var candidates = await _userService.GetCandidates(pagedParameters);
                 if (!candidates.Any())
                 {
