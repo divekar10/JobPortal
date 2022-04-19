@@ -5,10 +5,7 @@ using Serilog;
 using Serilog.Events;
 using Serilog.Sinks.MSSqlServer;
 using System;
-using System.Collections.ObjectModel;
-using System.Data;
 using System.IO;
-using Serilog.Sinks.MSSqlServer.Sinks.MSSqlServer.Options;
 
 namespace JobPortal.Api
 {
@@ -22,21 +19,21 @@ namespace JobPortal.Api
 
         public static void Main(string[] args)
         {
-            string connectionStrings = Configuration.GetConnectionString("ConnectionString");
+                string connectionStrings = Configuration.GetConnectionString("ConnectionString");
 
-            var informationSinkOpt = new MSSqlServerSinkOptions
-        {
-            TableName = "WebApiLogs",
-        };
+                var informationSinkOpt = new MSSqlServerSinkOptions
+                {
+                    TableName = "WebApiLogs",
+                };
 
-            var debugSinkOpt = new MSSqlServerSinkOptions
-            {
-                TableName = "ErrorLogs",
-            };
+                var debugSinkOpt = new MSSqlServerSinkOptions
+                {
+                    TableName = "ErrorLogs",
+                };
 
-            Log.Logger = new LoggerConfiguration()
-            .MinimumLevel.Debug()
-            .WriteTo.Conditional(
+             Log.Logger = new LoggerConfiguration()
+                              .MinimumLevel.Debug()
+                              .WriteTo.Conditional(
                 ev =>
                 {
                     // We want to only log information level logs to this table
@@ -58,11 +55,10 @@ namespace JobPortal.Api
                 },
                 wt => wt.MSSqlServer(
                     connectionString: connectionStrings,
-                    sinkOptions: debugSinkOpt)
-            )
-            .CreateLogger();
+                    sinkOptions: debugSinkOpt))
+                    .CreateLogger();
 
-            CreateHostBuilder(args).Build().Run();
+                    CreateHostBuilder(args).Build().Run();
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>

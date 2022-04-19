@@ -4,8 +4,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using Serilog;
+using Microsoft.Extensions.Caching.Memory;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -17,9 +17,12 @@ namespace JobPortal.Api.Controllers
     public class CandidateController : BaseController
     {
         private readonly IUserService _userService;
-        public CandidateController(IUserService userService)
+        private readonly IMemoryCache _memoryCache;
+        private readonly string candidateKey = "candidateKey";
+        public CandidateController(IUserService userService, IMemoryCache memoryCache)
         {
             _userService = userService;
+            _memoryCache = memoryCache;
         }
 
         [HttpGet]
@@ -27,8 +30,18 @@ namespace JobPortal.Api.Controllers
         [Authorize(Policy ="Admin")]
         public async Task<IActionResult> Get([FromQuery] PagedParameters pagedParameters)
         {
-            Log.Information("{0}", HttpContext.Request.Path);
-            return Ok(await _userService.GetUsers(pagedParameters));
+            object data = null;
+
+            if (_memoryCache.TryGetValue(candidateKey, out data))
+                return Ok(data);
+            data = await _userService.GetUsers(pagedParameters);
+
+            var cacheOptions = new MemoryCacheEntryOptions()
+                .SetSize(51)
+                .SetSlidingExpiration(TimeSpan.FromSeconds(30))
+                .SetAbsoluteExpiration(TimeSpan.FromSeconds(30));
+            _memoryCache.Set(candidateKey, data, cacheOptions);
+            return Ok(data);
         }
 
         [HttpPut] 

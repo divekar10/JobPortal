@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Configuration;
+using Serilog;
 using System;
 using System.Linq;
 using System.Net;
@@ -44,7 +45,7 @@ namespace JobPortal.Service.Notifications
             }
             catch (Exception ex)
             {
-                throw ex;
+                Log.Error("Error occurred : {0}", ex);
             }
         }
     }

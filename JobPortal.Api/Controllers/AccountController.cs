@@ -43,7 +43,9 @@ namespace JobPortal.Api.Controllers
                 else
                 {
                     var result = await _userService.Add(user);
-                    return Ok(new Response { Code = StatusCodes.Status200OK, Message = "Account successfully created...", Data = result });
+                    if(result != null)
+                        return Ok(new Response { Code = StatusCodes.Status200OK, Message = "Account successfully created...", Data = result });
+                    return BadRequest(new Response { Code = StatusCodes.Status400BadRequest, Message = "Something went wrong" });
                 }
             }
             return BadRequest(ModelState);
