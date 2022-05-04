@@ -30,17 +30,17 @@ namespace JobPortal.Api.Controllers
         [Authorize(Policy ="Admin")]
         public async Task<IActionResult> Get([FromQuery] PagedParameters pagedParameters)
         {
-            object data = null;
+            //object data = null;
 
-            if (_memoryCache.TryGetValue(candidateKey, out data))
-                return Ok(data);
-            data = await _userService.GetUsers(pagedParameters);
+            //if (_memoryCache.TryGetValue(candidateKey, out data))
+            //    return Ok(data);
+             var data = await _userService.GetUsers(pagedParameters);
 
-            var cacheOptions = new MemoryCacheEntryOptions()
-                .SetSize(51)
-                .SetSlidingExpiration(TimeSpan.FromSeconds(30))
-                .SetAbsoluteExpiration(TimeSpan.FromSeconds(30));
-            _memoryCache.Set(candidateKey, data, cacheOptions);
+            //var cacheOptions = new MemoryCacheEntryOptions()
+            //    .SetSize(51)
+            //    .SetSlidingExpiration(TimeSpan.FromSeconds(30))
+            //    .SetAbsoluteExpiration(TimeSpan.FromSeconds(30));
+            //_memoryCache.Set(candidateKey, data, cacheOptions);
             return Ok(data);
         }
 

@@ -129,7 +129,6 @@ namespace JobPortal.Api
             services.AddRepositories()
                     .AddServices();
             services.AddSingleton<IRateLimitConfiguration, RateLimitConfiguration>();
-            //services.AddSingleton<IRateLimitConfiguration, CustomRateLimitingConfiguration>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
