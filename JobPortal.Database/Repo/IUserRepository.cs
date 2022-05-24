@@ -11,5 +11,6 @@ namespace JobPortal.Database.Repo
         Task<IEnumerable<User>> GetCandidates(PagedParameters pagedParameters);
         Task<IEnumerable<User>> GetUsers(PagedParameters pagedParameters);
         Task<IEnumerable<AppliedJobDto>> GetMyAllJobsApplied(int userId, PagedParameters pagedParameters);
+        //string GetEmailbody(string type);
     }
 }

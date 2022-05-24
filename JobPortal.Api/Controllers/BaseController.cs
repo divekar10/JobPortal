@@ -16,7 +16,7 @@ namespace JobPortal.Api.Controllers
 
         protected int UserId => int.Parse(this.User.Claims.First(x => x.Type == "UserId").Value);
         protected int RoleId => int.Parse(this.User.Claims.First(x => x.Type == "RoleId").Value);
-
+        protected OkObjectResult NSResponse(object obj) => Ok(new { Status = "Success", Code = 200, ResponseData = obj });
         protected object NSModelState<T>(ModelStateDictionary model)
         {
             List<dynamic> dynamics = new();

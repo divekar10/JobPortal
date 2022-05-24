@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Serilog;
+using System.Text;
 
 namespace JobPortal.Service
 {
@@ -14,11 +15,13 @@ namespace JobPortal.Service
         private readonly IUserRepository _userRepository;
         private readonly IEmailSender _emailSender;
         private readonly IOtpService _otpService;
-        public UserService(IUserRepository userRepository, IEmailSender emailSender, IOtpService otpService)
+        private readonly IEmailTemplateRepository _emailTemplateRepository;
+        public UserService(IUserRepository userRepository, IEmailSender emailSender, IOtpService otpService, IEmailTemplateRepository emailTemplateRepository)
         {
             _userRepository = userRepository;
             _emailSender = emailSender;
             _otpService = otpService;
+            _emailTemplateRepository = emailTemplateRepository;
         }
         public async Task<User> Add(User entity)
         {
@@ -79,6 +82,8 @@ namespace JobPortal.Service
         {
             try
             {
+                //StringBuilder body = new();
+                var body = "";
                 var user = await GetUserByMail(email);
                 if (user != null)
                 {
@@ -90,11 +95,15 @@ namespace JobPortal.Service
 
                     var to = user.Email;
                     var sub = "OTP";
-                    var body = "";
-                    body += "<h3>Job Portal</h3>";
-                    body += $"<h4 style='font-size:1.1em'>Hi, {user.Name}</h4>";
-                    body += "<h5>For Reseting your password, OTP is valid for 10 minutes</h5>";
-                    body += $"<h2 style='background: #00466a;margin: 0 auto;width: max-content;padding: 0 10px;color: #fff;border-radius: 4px;'>{otp}</h2>";
+
+                    var emailBody = _emailTemplateRepository.GetEmailbody("Otp");
+
+                    body = emailBody.Template.Replace("##otp##", otp.ToString());
+
+                    //body.Append("<h3>Job Portal</h3>");
+                    //body.AppendLine($"<h4 style='font-size:1.1em'>Hi, {user.Name}</h4>");
+                    //body.AppendLine("<h5>For Reseting your password, OTP is valid for 10 minutes</h5>");
+                    //body.AppendLine($"<h2 style='background: #00466a;margin: 0 auto;width: max-content;padding: 0 10px;color: #fff;border-radius: 4px;'>{otp}</h2>");
 
                     var userOtp = new UserOtp();
                     userOtp.Otp = Convert.ToInt32(otp);

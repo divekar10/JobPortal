@@ -14,7 +14,8 @@ namespace JobPortal.Api.Service
                 .AddScoped<IJobRepository, JobRepository>()
                 .AddScoped<IApplicantRepository, ApplicantRepository>()
                 .AddScoped<IOtpRepository, OtpRepository>()
-                .AddScoped<IRoleRepository, RoleRepository>();
+                .AddScoped<IRoleRepository, RoleRepository>()
+                .AddScoped<IEmailTemplateRepository, EmailTemplateRepository>();
         }
 
         public static IServiceCollection AddServices(this IServiceCollection services)

@@ -62,5 +62,13 @@ namespace JobPortal.Database.Repo
                          .ToListAsync();
             return users;
         }
+
+        //public string GetEmailbody(string type)
+        //{
+        //    var emailBody = (from j in JobDbContext.EmailTemplate
+        //                     where j.Type == type
+        //                     select j).ToString();
+        //    return emailBody;
+        //}
     }
 }

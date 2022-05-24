@@ -18,7 +18,7 @@ namespace JobPortal.Api.Controllers
     {
         private readonly IUserService _userService;
         private readonly IMemoryCache _memoryCache;
-        private readonly string candidateKey = "candidateKey";
+       // private readonly string candidateKey = "candidateKey";
         public CandidateController(IUserService userService, IMemoryCache memoryCache)
         {
             _userService = userService;
@@ -80,7 +80,7 @@ namespace JobPortal.Api.Controllers
             var user = await _userService.ForgotPassword(email);
             if (user == true)
             {
-                return Ok(new Response { Code = StatusCodes.Status200OK, Message = "Otp sent to the register email address.." });
+                return NSResponse(new Response { Code = StatusCodes.Status200OK, Message = "Otp sent to the register email address.." });
             }
             return NotFound(new Response { Code = StatusCodes.Status400BadRequest, Message = "Incorrect Details.." });
         }

@@ -1,4 +1,5 @@
 ﻿using JobPortal.Model;
+using JobPortal.Model.Email;
 using Microsoft.EntityFrameworkCore;
 
 namespace JobPortal.Database
@@ -20,5 +21,6 @@ namespace JobPortal.Database
         public DbSet<Applicant> Applicant { get; set; }
         public DbSet<UserOtp> UserOtp { get; set; }
         public DbSet<ExceptionLog> ExceptionLog { get; set; }
+        public DbSet<EmailTemplate> EmailTemplate { get; set; }
     }
 }
