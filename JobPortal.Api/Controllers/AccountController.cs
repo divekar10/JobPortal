@@ -1,5 +1,6 @@
 ﻿using JobPortal.Model;
 using JobPortal.Service;
+using JobPortal.Service.Permission;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;

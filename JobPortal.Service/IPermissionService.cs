@@ -3,6 +3,6 @@ namespace JobPortal.Service
 {
     public interface IPermissionService
     {
-        //bool Authorize(int id);
+        bool Authorize(string permission);
     }
 }

@@ -22,5 +22,7 @@ namespace JobPortal.Database
         public DbSet<UserOtp> UserOtp { get; set; }
         public DbSet<ExceptionLog> ExceptionLog { get; set; }
         public DbSet<EmailTemplate> EmailTemplate { get; set; }
+        public DbSet<PermissionRoleMapping> PermissionRoleMapping { get; set; }
+        public DbSet<Permission> Permission { get; set; }
     }
 }
