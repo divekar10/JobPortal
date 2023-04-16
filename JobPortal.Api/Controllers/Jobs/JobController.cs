@@ -22,6 +22,7 @@ namespace JobPortal.Api.Controllers.Jobs
         }
 
         [HttpPost]
+        [Route("Add")]
         [Authorize(Policy = "AdminRecruiterOnly")]
         public async Task<IActionResult> Add(Job job)
         {

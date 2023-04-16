@@ -31,6 +31,7 @@ namespace JobPortal.Api.Controllers
         }
 
         [HttpPost]
+        [Route("Add")]
         [IsAllowed("RecruiterAdd")]
         public async Task<IActionResult> Add(User user)
         {
@@ -60,7 +61,7 @@ namespace JobPortal.Api.Controllers
         //}
 
         [HttpGet]
-        [Route("Recruiters1")]
+        [Route("Recruiters")]
         public async Task<IActionResult> GetRecuiters1([FromServices] IRecruiterService _recruiterService, [FromQuery] PagedParameters pagedParameters)
         {
             return Ok(await _recruiterService.GetRecruiters(pagedParameters));

@@ -19,7 +19,8 @@ namespace JobPortal.Api.Service
                 .AddScoped<IOtpRepository, OtpRepository>()
                 .AddScoped<IRoleRepository, RoleRepository>()
                 .AddScoped<IEmailTemplateRepository, EmailTemplateRepository>()
-                .AddScoped<IPermissionRoleMappingRepository, PermissionRoleMappingRepository>();
+                .AddScoped<IPermissionRoleMappingRepository, PermissionRoleMappingRepository>()
+                .AddScoped<IMenuRepository, MenuRepository>();
         }
 
         public static IServiceCollection AddServices(this IServiceCollection services)
@@ -34,7 +35,8 @@ namespace JobPortal.Api.Service
                 .AddScoped<IRecruiterService, RecruiterService>()
                 .AddScoped<ICacheManager, MemoryCacheManager>()
                 .AddScoped<IPermissionRoleMappingService, PermissionRoleMappingService>()
-                .AddScoped<IPermissionService, PermissionService>(); 
+                .AddScoped<IPermissionService, PermissionService>()
+                .AddScoped<IMenuService, MenuService>(); 
         }
     }
 }
